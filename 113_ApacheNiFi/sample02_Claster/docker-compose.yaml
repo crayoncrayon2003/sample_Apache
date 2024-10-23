@@ -1,0 +1,135 @@
+version: "3"
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:3.7.0'
+    hostname: zookeeper
+    container_name: zookeeper
+    restart: on-failure
+    expose:
+      - 2181
+      - 2888
+      - 3888
+    ports:
+      - "2181:2181"
+      - '2888:2888'
+      - '3888:2888'
+    networks:
+      - nifi-network
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_SERVER_ID=1
+      - ZOO_SERVERS=0.0.0.0:2888:3888
+
+  nifi0:
+    image: apache/nifi:1.14.0
+    hostname: nifi0
+    container_name: nifi0
+    restart: on-failure
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+    networks:
+      - nifi-network
+    depends_on:
+      - zookeeper
+    environment:
+      - NIFI_WEB_HTTP_PORT=8080
+      # - NIFI_WEB_HTTPS_PORT=8443
+      # - SINGLE_USER_CREDENTIALS_USERNAME=admin
+      # - SINGLE_USER_CREDENTIALS_PASSWORD=admin
+      - NIFI_CLUSTER_IS_NODE=true
+      - NIFI_CLUSTER_NODE_PROTOCOL_PORT=8082
+      - NIFI_ZK_CONNECT_STRING=zookeeper:2181
+      - NIFI_ELECTION_MAX_WAIT=1 min
+      - NIFI_SENSITIVE_PROPS_KEY=testpassword
+    healthcheck:
+        test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/nifi/}"
+        interval: "60s"
+        timeout: "3s"
+        start_period: "5s"
+        retries: 5
+    volumes:
+      - ./nifi0/database:/opt/nifi-registry/nifi-registry-current/database
+      - ./nifi0/flow_storage:/opt/nifi-registry/nifi-registry-current/flow_storage
+      - ./nifi0/fileprocessor:/opt/nifi/nifi-current/fileprocessor
+
+  nifi1:
+    image: apache/nifi:1.14.0
+    hostname: nifi1
+    container_name: nifi1
+    restart: on-failure
+    expose:
+      - 8080
+    ports:
+      - "8081:8080"
+    networks:
+      - nifi-network
+    depends_on:
+      - zookeeper
+    environment:
+      - NIFI_WEB_HTTP_PORT=8080
+      # - NIFI_WEB_HTTPS_PORT=8443
+      # - SINGLE_USER_CREDENTIALS_USERNAME=admin
+      # - SINGLE_USER_CREDENTIALS_PASSWORD=admin
+      - NIFI_CLUSTER_IS_NODE=true
+      - NIFI_CLUSTER_NODE_PROTOCOL_PORT=8082
+      - NIFI_ZK_CONNECT_STRING=zookeeper:2181
+      - NIFI_ELECTION_MAX_WAIT=1 min
+      - NIFI_SENSITIVE_PROPS_KEY=testpassword
+    healthcheck:
+        test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/nifi/}"
+        interval: "60s"
+        timeout: "3s"
+        start_period: "5s"
+        retries: 5
+    volumes:
+      - ./nifi1/database:/opt/nifi-registry/nifi-registry-current/database
+      - ./nifi1/flow_storage:/opt/nifi-registry/nifi-registry-current/flow_storage
+      - ./nifi1/fileprocessor:/opt/nifi/nifi-current/fileprocessor
+
+  nifi2:
+    image: apache/nifi:1.14.0
+    hostname: nifi2
+    container_name: nifi2
+    restart: on-failure
+    expose:
+      - 8080
+    ports:
+      - "8082:8080"
+    networks:
+      - nifi-network
+    depends_on:
+      - zookeeper
+    environment:
+      - NIFI_WEB_HTTP_PORT=8080
+      # - NIFI_WEB_HTTPS_PORT=8443
+      # - SINGLE_USER_CREDENTIALS_USERNAME=admin
+      # - SINGLE_USER_CREDENTIALS_PASSWORD=admin
+      - NIFI_CLUSTER_IS_NODE=true
+      - NIFI_CLUSTER_NODE_PROTOCOL_PORT=8082
+      - NIFI_ZK_CONNECT_STRING=zookeeper:2181
+      - NIFI_ELECTION_MAX_WAIT=1 min
+      - NIFI_SENSITIVE_PROPS_KEY=testpassword
+    healthcheck:
+        test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/nifi/}"
+        interval: "60s"
+        timeout: "3s"
+        start_period: "5s"
+        retries: 5
+    volumes:
+      - ./nifi2/database:/opt/nifi-registry/nifi-registry-current/database
+      - ./nifi2/flow_storage:/opt/nifi-registry/nifi-registry-current/flow_storage
+      - ./nifi2/fileprocessor:/opt/nifi/nifi-current/fileprocessor
+
+networks:
+  nifi-network:
+    name: nifi-network
+    ipam:
+      config:
+        - subnet: 172.19.1.0/24
+
+volumes:
+  nifi0:
+  nifi1:
+  nifi2:

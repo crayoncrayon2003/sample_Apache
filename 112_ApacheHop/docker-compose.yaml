@@ -1,0 +1,25 @@
+version: '3'
+services:
+
+  hop1:
+    #image: aacc73292e53
+    image: apache/hop:2.2.0
+    container_name: hop
+    ports:
+      - 8083:8080
+    user: root
+    volumes:
+      - ./files:/files
+    environment:
+      HOP_LOG_LEVEL: Basic
+      HOP_PROJECT_FOLDER: /files/
+      HOP_PROJECT_NAME: default
+      HOP_RUN_CONFIG: local
+  hopWeb1:
+    #image: faaa970e7332
+    image: apache/hop-web:2.2.0
+    container_name: hopWeb
+    ports:
+      - 8082:8080
+    volumes:
+      -  ./:/files

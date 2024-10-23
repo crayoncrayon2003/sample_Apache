@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  nifi:
+    image: apache/nifi:1.14.0
+    hostname: nifi
+    container_name: nifi
+    restart: on-failure
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    networks:
+      - nifi-network
+    environment:
+      - NIFI_WEB_HTTP_PORT=8080
+      - NIFI_WEB_HTTPS_PORT=8443
+      - SINGLE_USER_CREDENTIALS_USERNAME=admin
+      - SINGLE_USER_CREDENTIALS_PASSWORD=admin
+    volumes:
+      - ./nifi/database:/opt/nifi-registry/nifi-registry-current/database
+      - ./nifi/flow_storage:/opt/nifi-registry/nifi-registry-current/flow_storage
+      - ./nifi/fileprocessor:/opt/nifi/nifi-current/fileprocessor
+
+networks:
+  nifi-network:
+    name: nifi-network
+    ipam:
+      config:
+        - subnet: 172.19.1.0/24
+
+volumes:
+  nifi:
