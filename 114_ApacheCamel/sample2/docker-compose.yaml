@@ -1,0 +1,74 @@
+version: "3.8"
+services:
+  karavan:
+    image: ghcr.io/apache/camel-karavan:4.8.1
+    hostname: karavan
+    container_name: karavan
+    restart: always
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      gitea:
+        condition: service_healthy
+    networks:
+      - karavan-network
+    environment:
+      - KARAVAN_GIT_REPOSITORY=http://gitea:3000/karavan/karavan.git
+      - KARAVAN_GIT_USERNAME=karavan
+      - KARAVAN_GIT_PASSWORD=karavan
+      - KARAVAN_GIT_BRANCH=main
+      - KARAVAN_CONTAINER_IMAGE_REGISTRY=registry:5000
+      - KARAVAN_CONTAINER_IMAGE_REGISTRY_USERNAME=
+      - KARAVAN_CONTAINER_IMAGE_REGISTRY_PASSWORD=
+      - KARAVAN_CONTAINER_IMAGE_GROUP=karavan
+      - KARAVAN_DOCKER_NETWORK=karavan
+    labels:
+      - "org.apache.camel.karavan/type=internal"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  gitea:
+    image: gitea/gitea:1.21.6-rootless
+    hostname: gitea
+    container_name: gitea
+    restart: always
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    networks:
+      - karavan-network
+    volumes:
+      - ./gitea/data:/var/lib/gitea
+      - ./gitea/config:/etc/gitea
+    labels:
+      - "org.apache.camel.karavan/type=internal"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthz"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  registry:
+    image: registry:2
+    hostname: registry
+    container_name: registry
+    restart: always
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+    networks:
+      - karavan-network
+    labels:
+      - "org.apache.camel.karavan/type=internal" 
+
+networks:
+  karavan-network:
+    name: karavan-network
+    ipam:
+      config:
+        - subnet: 172.19.1.0/24

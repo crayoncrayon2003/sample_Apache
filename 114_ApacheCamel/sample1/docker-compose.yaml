@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  camel:
+    image: apache/camel-k:latest
+    hostname: camel
+    container_name: camel
+    ports:
+      - "8080:8080"
+    environment:
+      - CAMEL_KUBERNETES_NAMESPACE=default
+      - CAMEL_KUBERNETES_SERVICE_HOST=localhost
+      - CAMEL_KUBERNETES_SERVICE_PORT=8080
