@@ -6,7 +6,7 @@ mkdir -p ./nifi/fileprocessor ./nifi/database ./nifi/flow_storage
 
 # build and run
 ```
-sudo docker-compose up -d
+sudo docker compose up -d
 ```
 wait for 5 minutes.
 

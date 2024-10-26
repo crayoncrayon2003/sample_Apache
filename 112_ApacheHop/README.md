@@ -5,7 +5,7 @@ mkdir -p ./files
 
 # build and run
 ```
-docker-compose up -d
+docker compose up -d
 ```
 Access the following URL using the Web browser.
 * apache/hop

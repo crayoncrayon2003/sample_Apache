@@ -5,7 +5,7 @@ mkdir -p ./gitea/config ./gitea/data
 
 # build and run
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 apache/camel-karavan has a GUI

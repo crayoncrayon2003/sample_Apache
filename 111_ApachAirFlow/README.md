@@ -9,11 +9,11 @@ echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
 # build and run
 wait for 5 minutes.
 ```
-docker-compose up airflow-init
+docker compose up airflow-init
 ```
 
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 wait for 5 minutes.

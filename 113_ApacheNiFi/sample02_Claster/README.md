@@ -8,7 +8,7 @@ mkdir -p ./nifi2/fileprocessor ./nifi2/database ./nifi2/flow_storage
 
 # build and run
 ```
-sudo docker-compose up --scale nifi=3 -d
+sudo docker compose up --scale nifi=3 -d
 ```
 wait for 5 minutes.
 
