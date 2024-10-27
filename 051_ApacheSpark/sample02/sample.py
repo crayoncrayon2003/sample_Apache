@@ -9,7 +9,7 @@ os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 
 conf = SparkConf()
 conf.setAppName("simpleApp")
-conf.setMaster("spark://localhost:7077")
+conf.setMaster("spark://localhost:7070")
 sc = SparkContext(conf=conf)
 spark = SparkSession(sc)
 
