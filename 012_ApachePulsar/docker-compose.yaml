@@ -13,7 +13,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
       ALLOW_ANONYMOUS_LOGIN: yes
     healthcheck:
-      test: nc -z localhost 2181 || exit -1
+      test: nc -z zookeeper 2181 || exit -1
       interval: 10s
       timeout: 5s
       retries: 3
@@ -55,6 +55,11 @@ services:
     volumes:
       - ./data/bookkeeper:/pulsar/data/bookkeeper
     command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
+    healthcheck:
+      test: nc -z broker 8000 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   broker:
     image: apachepulsar/pulsar:3.0.1
@@ -85,6 +90,11 @@ services:
       bookie:
         condition: service_started
     command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
+    healthcheck:
+      test: nc -z broker 6650 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 networks:
   pulsar-network:
