@@ -15,6 +15,11 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
       ALLOW_ANONYMOUS_LOGIN: yes
+    healthcheck:
+      test: nc -z zookeeper 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   kafka:
     ################################################
@@ -40,6 +45,12 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z kafka 9092 || exit 1"]
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 5
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
