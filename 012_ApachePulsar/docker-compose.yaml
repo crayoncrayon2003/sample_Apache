@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: zookeeper:3.9.2
+    hostname: zookeeper
+    container_name: zookeeper
+    restart: always
+    networks:
+      - pulsar-network
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ALLOW_ANONYMOUS_LOGIN: yes
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  pulsar-init:
+    container_name: pulsar-init
+    hostname: pulsar-init
+    image: apachepulsar/pulsar:3.0.1
+    networks:
+      - pulsar-network
+    command: >
+      bin/pulsar initialize-cluster-metadata \
+               --cluster cluster-sample \
+               --zookeeper zookeeper:2181 \
+               --configuration-store zookeeper:2181 \
+               --web-service-url http://broker:8080 \
+               --broker-service-url pulsar://broker:6650
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+
+  bookie:
+    image: apachepulsar/pulsar:3.0.1
+    container_name: bookie
+    restart: always
+    networks:
+      - pulsar-network
+    environment:
+      - clusterName=cluster-sample
+      - zkServers=zookeeper:2181
+      - metadataServiceUri=metadata-store:zk:zookeeper:2181
+      - advertisedAddress=bookie
+      - BOOKIE_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      pulsar-init:
+        condition: service_completed_successfully
+    volumes:
+      - ./data/bookkeeper:/pulsar/data/bookkeeper
+    command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
+
+  broker:
+    image: apachepulsar/pulsar:3.0.1
+    container_name: broker
+    hostname: broker
+    restart: always
+    networks:
+      - pulsar-network
+    environment:
+      - metadataStoreUrl=zk:zookeeper:2181
+      - zookeeperServers=zookeeper:2181
+      - clusterName=cluster-sample
+      - managedLedgerDefaultEnsembleSize=1
+      - managedLedgerDefaultWriteQuorum=1
+      - managedLedgerDefaultAckQuorum=1
+      - advertisedAddress=broker
+      - internalListenerName=internal
+      - advertisedListeners=internal:pulsar://broker:6650
+      - brokerServicePort=6650
+      - webServicePort=8080
+      - PULSAR_MEM=-Xms128m -Xmx2096m -XX:MaxDirectMemorySize=256m
+      - loadManagerClassName=org.apache.pulsar.broker.loadbalance.extensions.ExtensibleLoadManagerImpl
+      - loadBalancerLoadSheddingStrategy=org.apache.pulsar.broker.loadbalance.extensions.scheduler.TransferShedder
+      - PULSAR_PREFIX_loadBalancerDebugModeEnabled=true
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      bookie:
+        condition: service_started
+    command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
+
+networks:
+  # pulsar-network:
+  #   name: pulsar-network
+  #   ipam:
+  #     config:
+  #       - subnet: 172.19.1.0/24
+
+  pulsar-network:
+    driver: bridge
