@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: zookeeper:3.9.2
+    hostname: zookeeper
+    container_name: zookeeper
+    networks:
+      - atlas-network
+    ports:
+      - "2181:2181"
+    healthcheck:
+      test: nc -z zookeeper 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  atlas:
+    image: sburn/apache-atlas
+    hostname: atlas
+    container_name: atlas
+    ports:
+      - "21000:21000"
+    networks:
+      - atlas-network
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+
+networks:
+  atlas-network:
+    driver: bridge
