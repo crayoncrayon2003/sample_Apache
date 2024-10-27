@@ -1,0 +1,71 @@
+version: '3.8'
+services:
+  zookeeper:
+    image: zookeeper:3.9.2
+    hostname: zookeeper
+    container_name: zookeeper
+    restart: always
+    networks:
+      - storm-network
+    expose:
+      - "2181"
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ALLOW_ANONYMOUS_LOGIN: yes
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  nimbus:
+    # nimbus is master node of storm.
+    # nimbus assigns a task to supervisor.
+    image: storm:2.7.0
+    hostname: nimbus
+    container_name: nimbus
+    command: storm nimbus
+    restart: always
+    expose:
+      - "6627"
+      - "8080"
+    ports:
+      - "6627:6627"
+      - "8080:8080"
+    networks:
+      - storm-network
+    healthcheck:
+      test: ["CMD", "storm", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+
+  supervisor:
+    # supervisor is worker node of storm.
+    image: storm:2.7.0
+    hostname: supervisor
+    container_name: supervisor
+    command: storm supervisor
+    restart: always
+    networks:
+      - storm-network
+    healthcheck:
+      test: ["CMD", "storm", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+      nimbus:
+        condition: service_healthy
+
+networks:
+  storm-network:
+    driver: bridge
