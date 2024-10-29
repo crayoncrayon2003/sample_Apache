@@ -1,0 +1,141 @@
+version: '3.8'
+
+x-hadoop-variables: &hadoop_environment
+  HADOOP_HOME: /opt/hadoop
+  CLUSTER_NAME: cluster-sample
+  CORE-SITE.XML_fs.default.name: hdfs://namenode
+  CORE-SITE.XML_fs.defaultFS: hdfs://namenode
+  HDFS-SITE.XML_dfs.namenode.rpc-address: namenode:8020
+  # CORE-SITE.XML_fs.default.name: hdfs://localhost
+  # CORE-SITE.XML_fs.defaultFS: hdfs://localhost
+  # HDFS-SITE.XML_dfs.namenode.rpc-address: localhost:8020
+  HDFS-SITE.XML_dfs.replication: "1"
+  MAPRED-SITE.XML_mapreduce.framework.name: yarn
+  MAPRED-SITE.XML_yarn.app.mapreduce.am.env: HADOOP_MAPRED_HOME=$HADOOP_HOME
+  MAPRED-SITE.XML_mapreduce.map.env: HADOOP_MAPRED_HOME=$HADOOP_HOME
+  MAPRED-SITE.XML_mapreduce.reduce.env: HADOOP_MAPRED_HOME=$HADOOP_HOME
+  YARN-SITE.XML_yarn.resourcemanager.hostname: resourcemanager
+  YARN-SITE.XML_yarn.nodemanager.pmem-check-enabled: false
+  YARN-SITE.XML_yarn.nodemanager.delete.debug-delay-sec: 600
+  YARN-SITE.XML_yarn.nodemanager.vmem-check-enabled: false
+  YARN-SITE.XML_yarn.nodemanager.aux-services: mapreduce_shuffle
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.maximum-applications: 10000
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.maximum-am-resource-percent: 0.1
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.resource-calculator: org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.root.queues: default
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.root.default.capacity: 100
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.root.default.user-limit-factor: 1
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.root.default.maximum-capacity: 100
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.root.default.state: RUNNING
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.root.default.acl_submit_applications: "*"
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.root.default.acl_administer_queue: "*"
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.node-locality-delay: 40
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.queue-mappings: ""
+  CAPACITY-SCHEDULER.XML_yarn.scheduler.capacity.queue-mappings-override.enable: false
+
+
+services:
+  namenode:
+    image: apache/hadoop:3.3.5
+    hostname: namenode
+    container_name: namenode
+    user: hadoop
+    ports:
+      - 8020:8020
+      - 50070:50070
+      - 9870:9870
+    networks:
+      - hdfs-network
+    environment:
+      HADOOP_HOME: /opt/hadoop
+      CLUSTER_NAME: cluster-sample
+      ENSURE_NAMENODE_DIR: /tmp/hadoop-hadoop/dfs/name
+
+      <<: *hadoop_environment
+    volumes:
+      - ./data/namenode:/opt/hadoop/data/nameNode
+      # - /var/run/docker.sock:/var/run/docker.sock
+    command: ["hdfs", "namenode"]
+    healthcheck:
+      test: [ "CMD", "curl", "http://localhost:9870" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  datanode1:
+    image: apache/hadoop:3.3.5
+    hostname: datanode1
+    container_name: datanode1
+    restart: always
+    networks:
+      - hdfs-network
+    environment:
+      <<: *hadoop_environment
+      #ENSURE_STANDBY_NAMENODE_DIR: /tmp/hadoop-hadoop/dfs/name
+    volumes:
+      - ./data/datanode1:/opt/hadoop/data/dataNode
+      # - /var/run/docker.sock:/var/run/docker.sock
+    command: ["hdfs", "datanode"]
+    depends_on:
+      namenode:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "http://localhost:9864" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  datanode2:
+    image: apache/hadoop:3.3.5
+    hostname: datanode2
+    container_name: datanode2
+    restart: always
+    networks:
+      - hdfs-network
+    environment:
+      <<: *hadoop_environment
+      #ENSURE_STANDBY_NAMENODE_DIR: /tmp/hadoop-hadoop/dfs/name
+    volumes:
+      - ./data/datanode2:/opt/hadoop/data/dataNode
+      # - /var/run/docker.sock:/var/run/docker.sock
+    command: ["hdfs", "datanode"]
+    depends_on:
+      namenode:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "http://localhost:9864" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # resourcemanager:
+  #   image: apache/hadoop:3.3.5
+  #   hostname: resourcemanager
+  #   container_name: resourcemanager
+  #   restart: always
+  #   ports:
+  #     - 8088:8088
+  #   networks:
+  #     - hdfs-network
+  #   environment:
+  #     <<: *hadoop_environment
+  #   command: [ "yarn", "resourcemanager" ]
+
+  # nodemanager:
+  #   image: apache/hadoop:3.3.5
+  #   hostname: nodemanager
+  #   container_name: nodemanager
+  #   networks:
+  #     - hdfs-network
+  #   environment:
+  #     <<: *hadoop_environment
+  #   command: [ "yarn", "nodemanager" ]
+
+networks:
+  hdfs-network:
+    driver: bridge
+
+# volumes:
+#   namenode:
+#   datanode1:
+#   datanode2:
