@@ -1,31 +1,31 @@
-from pyspark.context import SparkContext
-from pyspark.sql import SparkSession
-from pyspark import SparkConf, SparkContext
 import os
 import sys
+from pyspark.sql import SparkSession
+from pyspark import SparkConf
+from pyspark.sql.functions import*
+from pyspark.sql.session import SparkSession
+from pyspark.context import SparkContext
+import pandas as pd
 
-os.environ['PYSPARK_PYTHON'] = sys.executable
-os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
-
-conf = SparkConf()
-conf.setAppName("simpleApp")
-conf.setMaster("spark://localhost:7070")
-sc = SparkContext(conf=conf)
-spark = SparkSession(sc)
+# Spark configuration
+conf = SparkConf() \
+        .setAppName("simpleApp") \
+        .setMaster("spark://localhost:7077") \
+        .set("spark.pyspark.driver.python", "/usr/bin/python3.12") \
+        .set("spark.pyspark.python", "/usr/bin/python3.12")
+spark = SparkSession.builder.config(conf=conf).getOrCreate()
 
 def main():
-    input_data = [
+    dict_data = [
         {'arithmetic': 86, 'science': 57, 'social': 45, 'music': 100},
         {'arithmetic': 67, 'science': 12, 'social': 43, 'music': 54},
         {'arithmetic': 98, 'science': 98, 'social': 78, 'music': 69},
     ]
-    # rdd = spark.parallelize(input_data)
-    # df  = rdd.toDF
-    # print("num is {}".format(df.count()))
-    df = spark.createDataFrame(input_data)
-    df.show()
-    print(df.show)
-    print("aa")
+    df_pandas = pd.DataFrame(dict_data)
+    df_spark = spark.createDataFrame(df_pandas)
+    df_spark.show()
+    print("done..")
+
 
 if __name__ == "__main__":
     main()

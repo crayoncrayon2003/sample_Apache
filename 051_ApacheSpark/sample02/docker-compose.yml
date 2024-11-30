@@ -1,53 +1,90 @@
 version: "3.8"
 services:
-  master:
-    image: bitnami/spark:latest
-    hostname: master
+  spark-master:
+    image: bitnami/spark:3.5.3
+    hostname: spark-master
     container_name: spark-master
     restart: on-failure
     expose:
-      - "4040"
+      - "8080"
       - "7077"
+      - "6066"
     ports:
-      - "4040:4040"
+      - "8080:8080"
       - "7077:7077"
-    environment:
-      - SPARK_MODE=master
-      - SPARK_MASTER_HOST=master
+      - "6066:6066"
     networks:
       - spark-network
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=spark-master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
+      - PYSPARK_PYTHON=python3.12
+      - PYSPARK_DRIVER_PYTHON=python3.12
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
-  worker1:
-    image: bitnami/spark:latest
-    hostname: worker1
+  spark-worker1:
+    image: bitnami/spark:3.5.3
+    hostname: spark-worker1
     container_name: spark-worker1
     restart: on-failure
+    depends_on:
+      - spark-master
     expose:
       - "8081"
     ports:
       - "8081:8081"
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://master:7077
-      - SPARK_WORKER_CORES=1
     networks:
       - spark-network
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
+      - SPARK_SUBMIT_OPTIONS="--conf spark.dynamicAllocation.enabled=false"
+      - PYSPARK_PYTHON=python3.12
+      - PYSPARK_DRIVER_PYTHON=python3.12
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
-  worker2:
-    image: bitnami/spark:latest
-    hostname: worker2
+  spark-worker2:
+    image: bitnami/spark:3.5.3
+    hostname: spark-worker2
     container_name: spark-worker2
     restart: on-failure
+    depends_on:
+      - spark-master
     expose:
-      - "8082"
+      - "8081"
     ports:
-      - "8082:8082"
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://master:7077
-      - SPARK_WORKER_CORES=1
+      - "8082:8081"
     networks:
       - spark-network
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_USER=spark
+      - SPARK_SUBMIT_OPTIONS="--conf spark.dynamicAllocation.enabled=false"
+      - PYSPARK_PYTHON=python3.12
+      - PYSPARK_DRIVER_PYTHON=python3.12
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
 
 networks:
   spark-network:
