@@ -46,4 +46,5 @@ def main():
     print(results)
 
 if __name__ == "__main__":
+    print('\033[31m{0}\033[0m'.format("This sample is aveilable python3.9"))
     main()
