@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  ray-head:
+    image: rayproject/ray:latest
+    hostname: ray-head
+    container_name: ray-head
+    expose:
+      - "8265"
+      - "6379"
+      - "10001"
+    ports:
+      - "8265:8265"
+      - "6379:6379"
+      - "10001:10001"
+    networks:
+      - ray-network
+    # command: ray start --head --port=6379 --dashboard-host=0.0.0.0 --dashboard-port=8265 --block --node-ip-address=localhost
+    command: ray start --head --port=6379 --dashboard-host=0.0.0.0 --dashboard-port=8265 --block
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    shm_size: '1g'
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1g'
+
+  ray-worker:
+    image: rayproject/ray:latest
+    depends_on:
+      - ray-head
+    networks:
+      - ray-network
+    # command: ray start --address=ray-head:6379 --num-cpus=1 --block --node-ip-address=localhost
+    command: ray start --address=ray-head:6379 --num-cpus=1 --block
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    shm_size: '1g'
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1g'
+
+networks:
+  ray-network:
+    name: ray-network
+    ipam:
+      config:
+        - subnet: 172.19.1.0/24
