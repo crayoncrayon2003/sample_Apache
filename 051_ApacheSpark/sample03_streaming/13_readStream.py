@@ -14,8 +14,8 @@ from pyspark.sql.types import StructType, StructField, StringType
 DIR_ROOT   = os.path.dirname(os.path.abspath(__file__))
 DIR_OUTPUT = os.path.join(DIR_ROOT,"output")
 DIR_CHECKPOINT = os.path.join(DIR_ROOT,"checkpoint")
-shutil.rmtree(DIR_OUTPUT)
-shutil.rmtree(DIR_CHECKPOINT)
+if os.path.exists(DIR_OUTPUT):      shutil.rmtree(DIR_OUTPUT)
+if os.path.exists(DIR_CHECKPOINT):  shutil.rmtree(DIR_CHECKPOINT)
 os.makedirs(DIR_OUTPUT,exist_ok=True)
 os.makedirs(DIR_CHECKPOINT,exist_ok=True)
 
