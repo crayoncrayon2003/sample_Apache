@@ -1,0 +1,143 @@
+version: "3.8"
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.7
+    hostname: zookeeper
+    container_name: zookeeper
+    restart: always
+    networks:
+      - spark-network
+    expose:
+      - "2181"
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOO_PORT_NUMBER=2181
+      - ZOO_TICK_TIME=2000
+      - ZOO_INIT_LIMIT=30
+      - ZOO_SYNC_LIMIT=30
+      - ZOO_MAX_CLIENT_CNXNS=6000
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512MiB
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  kafka:
+    image: bitnami/kafka:3.3.2
+    hostname: kafka
+    container_name: kafka
+    restart: on-failure
+    expose:
+      - "9092"
+      - "9093"
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    networks:
+      - spark-network
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_BROKER_ID=0
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_CLIENT_LISTENER_NAME=PLAINTEXT
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_ZOOKEEPER_METADATA_MIGRATION_ENABLE=true
+      - KAFKA_ZOOKEEPER_SESSION_TIMEOUT_MS=2000
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    healthcheck:
+      test: nc -z localhost 9092 || exit 1
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024MiB
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  spark-master:
+    image: bitnami/spark:3.5.3
+    hostname: spark-master
+    container_name: spark-master
+    restart: on-failure
+    expose:
+      - "4040"
+      - "8080"
+      - "7077"
+      - "9001"
+    ports:
+      - "4040:4040"
+      - "8080:8080"
+      - "7077:7077"
+      - "9001:9001"
+    networks:
+      - spark-network
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_HOST=spark-master
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_LOCAL_IP=0.0.0.0
+      - PYSPARK_PYTHON=/usr/bin/python3.12
+      - PYSPARK_DRIVER_PYTHON=/usr/bin/python3.12
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  spark-worker1:
+    image: bitnami/spark:3.5.3
+    hostname: spark-worker1
+    container_name: spark-worker1
+    restart: on-failure
+    depends_on:
+      - spark-master
+    expose:
+      - "8081"
+    ports:
+      - "8081:8081"
+    networks:
+      - spark-network
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_HOST=spark-master
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_WORKER_CORES=1
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_LOCAL_STORAGE_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+      - SPARK_LOCAL_IP=0.0.0.0
+      - PYSPARK_PYTHON=/usr/bin/python3.12
+      - PYSPARK_DRIVER_PYTHON=/usr/bin/python3.12
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  spark-network:
+    name: spark-network
+    ipam:
+      config:
+        - subnet: 172.19.1.0/24
