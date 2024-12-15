@@ -28,9 +28,9 @@ def main():
 if __name__ == "__main__":
     print('\033[31m{0}\033[0m'.format("This sample is aveilable python3.12"))
     print('\033[31m{0}\033[0m'.format(
-        "This sample is a KafkaConsumer for testing a KafkaProducer."+
-        "Confirm to receive the topic, and does the following"+
-        " * stop running KafkaConsumer"+
-        " * keep running KafkaProducer"
+        "This sample is a KafkaConsumer for testing a KafkaProducer.\n"+
+        "Confirm to receive the topic, and does the following.\n"+
+        " * stop running KafkaConsumer\n"+
+        " * keep running KafkaProducer\n"
     ))
 main()
