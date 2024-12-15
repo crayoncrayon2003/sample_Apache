@@ -7,12 +7,19 @@ from pyspark.sql.session import SparkSession
 from pyspark.context import SparkContext
 import pandas as pd
 
-# Spark configuration
+#Spark configuration
 conf = SparkConf() \
         .setAppName("simpleApp") \
         .setMaster("spark://localhost:7077") \
+        .set("spark.local.ip", "localhost") \
         .set("spark.pyspark.driver.python", "/usr/bin/python3.12") \
         .set("spark.pyspark.python", "/usr/bin/python3.12")
+# conf = SparkConf() \
+#         .setAppName("simpleApp") \
+#         .setMaster('local') \
+#         .set("spark.local.ip", "localhost") \
+#         .set("spark.pyspark.driver.python", "/usr/bin/python3.12") \
+#         .set("spark.pyspark.python", "/usr/bin/python3.12")
 spark = SparkSession.builder.config(conf=conf).getOrCreate()
 
 def main():
