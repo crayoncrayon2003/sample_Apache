@@ -25,6 +25,10 @@ add the following at the end
 export SPARK_HOME=/opt/spark-3-5-4
 export PATH=$SPARK_HOME/bin:$PATH
 export PATH=$SPARK_HOME/sbin:$PATH
+
+export PYSPARK_PYTHON=/usr/bin/python3.12
+export PYSPARK_DRIVER_PYTHON=/usr/bin/python3.12
+
 ```
 
 apply the changes
