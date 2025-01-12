@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "Entity",
+  "fields": [
+    { "name": "name", "type": "string" },
+    { "name": "temperature", "type": "int" },
+    { "name": "humidity", "type": "int" }
+  ]
+}

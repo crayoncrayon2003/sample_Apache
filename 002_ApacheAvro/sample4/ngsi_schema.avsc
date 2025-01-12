@@ -1,0 +1,44 @@
+{
+    "type": "record",
+    "name": "Entity",
+    "fields": [
+        {"name": "id", "type": "string"},
+        {"name": "type", "type": "string"},
+        {
+            "name": "name",
+            "type": {
+                "type": "record",
+                "name": "Name",
+                "fields": [
+                    {"name": "type", "type": "string"},
+                    {"name": "value", "type": "string"},
+                    {"name": "metadata", "type": {"type": "map", "values": "string"}}
+                ]
+            }
+        },
+        {
+            "name": "temperature",
+            "type": {
+                "type": "record",
+                "name": "Temperature",
+                "fields": [
+                    {"name": "type", "type": "string"},
+                    {"name": "value", "type": "int"},
+                    {"name": "metadata", "type": {"type": "map", "values": "string"}}
+                ]
+            }
+        },
+        {
+            "name": "humidity",
+            "type": {
+                "type": "record",
+                "name": "Humidity",
+                "fields": [
+                    {"name": "type", "type": "string"},
+                    {"name": "value", "type": "int"},
+                    {"name": "metadata", "type": {"type": "map", "values": "string"}}
+                ]
+            }
+        }
+    ]
+}

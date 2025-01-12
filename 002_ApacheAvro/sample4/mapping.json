@@ -1,0 +1,19 @@
+{
+    "id": "generated-id",
+    "type": "EntityType",
+    "name": {
+        "type": "Text",
+        "value": "source[\"name\"]",
+        "metadata": {}
+    },
+    "temperature": {
+        "type": "Integer",
+        "value": "source[\"temperature\"]",
+        "metadata": {}
+    },
+    "humidity": {
+        "type": "Integer",
+        "value": "source[\"humidity\"]",
+        "metadata": {}
+    }
+}
