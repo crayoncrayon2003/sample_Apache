@@ -46,7 +46,6 @@ class DataModelTransformer:
                 self._process_mapping(item, source)
 
     def validate(self, data, schema):
-        """Validate data against a schema and return True if valid, False otherwise."""
         writer = DatumWriter(schema)
         schema_name = schema.fullname if hasattr(schema, 'fullname') else "Unknown Schema"
         try:
