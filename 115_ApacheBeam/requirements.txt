@@ -1,0 +1,7 @@
+# main
+apache-beam
+
+# for test
+fastapi
+uvicorn
+pydantic
