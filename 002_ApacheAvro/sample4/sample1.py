@@ -11,6 +11,7 @@ class DataModelTransformer:
         self.source_schema = self._load_schema(source_schema_path)
         self.target_schema = self._load_schema(target_schema_path)
         self.mapping = self._load_json(mapping_path)
+        self.pattern = re.compile(r'^source\[(["\'])(.+?)\1\]$')
 
     def _load_schema(self, path):
         if not os.path.exists(path):
@@ -28,13 +29,16 @@ class DataModelTransformer:
             raise ValueError(f"Invalid JSON format in '{path}': {e}")
 
     def _process_mapping(self, data, source):
-        pattern = re.compile(r'^source\[(["\'])(.+?)\1\]$')
+        # self._process_mapping_recursion(data, source)
+        self._process_mapping_loop(data, source)
+
+    def _process_mapping_recursion(self, data, source):
         if isinstance(data, dict):
             for key, value in data.items():
                 if isinstance(value, (dict, list)):
-                    self._process_mapping(value, source)
+                    self._process_mapping_recursion(value, source)
                 elif isinstance(value, str):
-                    match = pattern.match(value)
+                    match = self.pattern.match(value)
                     if match:
                         source_key = match.group(2)
                         if source_key in source:
@@ -43,7 +47,29 @@ class DataModelTransformer:
                             raise KeyError(f"Key '{source_key}' not found in source.")
         elif isinstance(data, list):
             for item in data:
-                self._process_mapping(item, source)
+                self._process_mapping_recursion(item, source)
+
+    def _process_mapping_loop(self, data, source):
+        stack = [(data, source)]
+
+        while stack:
+            current_data, current_source = stack.pop()
+
+            if isinstance(current_data, dict):
+                for key, value in current_data.items():
+                    if isinstance(value, dict) or isinstance(value, list):
+                        stack.append((value, current_source))
+                    elif isinstance(value, str):
+                        match = self.pattern.match(value)
+                        if match:
+                            source_key = match.group(2)
+                            if source_key in current_source:
+                                current_data[key] = current_source[source_key]
+                            else:
+                                raise KeyError(f"Key '{source_key}' not found in source.")
+            elif isinstance(current_data, list):
+                for item in current_data:
+                    stack.append((item, current_source))
 
     def validate(self, data, schema):
         writer = DatumWriter(schema)
