@@ -1,0 +1,35 @@
+{
+    "data": {
+        "records": [
+            {
+                "key1": null,
+                "key2": 1,
+                "key3": "1"
+            },
+            {
+                "key1": 2,
+                "key2": null,
+                "key3": "2"
+            },
+            {
+                "key1": 3,
+                "key2": 3,
+                "key3": null
+            }
+        ],
+        "fields": [
+            {
+                "id": "key1",
+                "type": "int"
+            },
+            {
+                "id": "key2",
+                "type": "numeric"
+            },
+            {
+                "id": "key3",
+                "type": "text"
+            }
+        ]
+    }
+}
