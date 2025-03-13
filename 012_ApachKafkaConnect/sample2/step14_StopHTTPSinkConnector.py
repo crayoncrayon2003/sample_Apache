@@ -8,7 +8,7 @@ config_ini.read(os.path.join(os.path.dirname(os.path.abspath(__file__)), "config
 KAFKA_CONNECT = 'http://{}:{}/connectors'.format(config_ini['DEFAULT']['HOST_IP'], '8083')
 
 def main():
-    connector_name = "custom-source-connector"
+    connector_name = "custom-sink-connector"
 
     # Delete Connector
     response = requests.delete(
