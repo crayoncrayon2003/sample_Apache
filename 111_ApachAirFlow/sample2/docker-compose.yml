@@ -1,0 +1,95 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - airflow-net
+
+  redis:
+    image: redis:6.2.6
+    restart: always
+    networks:
+      - airflow-net
+
+  airflow-webserver:
+    image: apache/airflow:2.7.1
+    restart: always
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session  # 修正
+      - AIRFLOW__WEBSERVER__SECRET_KEY=3fa9d83227b0f315f0cd09a0db55a258d1b3b1c11862f619c2a18d8d3c7a4748
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - airflow-net
+    volumes:
+      - ./airflow-dags:/opt/airflow/dags
+      - ./airflow-logs:/opt/airflow/logs
+    entrypoint: >
+      bash -c "
+        until nc -z -v -w30 postgres 5432; do echo 'Waiting for PostgreSQL...'; sleep 1; done;
+        airflow db upgrade &&
+        airflow users create --username admin --firstname FirstName --lastname LastName --role Admin --email admin@example.com --password admin || echo 'Admin user already exists';
+        exec airflow webserver
+      "
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.1
+    restart: always
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - airflow-net
+    volumes:
+      - ./airflow-dags:/opt/airflow/dags
+      - ./airflow-logs:/opt/airflow/logs
+    entrypoint: >
+      bash -c "
+        until nc -z -v -w30 postgres 5432; do echo 'Waiting for PostgreSQL...'; sleep 1; done;
+        airflow db upgrade &&
+        exec airflow scheduler
+      "
+
+  airflow-worker:
+    image: apache/airflow:2.7.1
+    restart: always
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+      - AIRFLOW__CELERY__RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - airflow-net
+    volumes:
+      - ./airflow-dags:/opt/airflow/dags
+      - ./airflow-logs:/opt/airflow/logs
+    command: ["celery", "worker"]
+
+volumes:
+  postgres_data:
+  airflow-dags:
+  airflow-logs:
+
+networks:
+  airflow-net:
+    driver: bridge
