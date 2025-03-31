@@ -1,6 +1,6 @@
-# prepare
+# pre process
 ```
-mkdir -p ./files
+./00_mkdir.sh
 ```
 
 # build and run
@@ -19,6 +19,11 @@ Access the following URL using the Web browser.
 # down
 ```
 docker compose down
+```
+
+# post process
+```
+./00_mkdir.sh
 ```
 
 # refarence

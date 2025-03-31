@@ -1,0 +1,1 @@
+sudo rm -R ./hop_data ./hop_files
