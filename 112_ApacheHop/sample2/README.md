@@ -28,15 +28,15 @@ Do one of the following, and select Pipeline.
 1. Click on the Field. Search for "CSV file input"
 2. Click on the text of "CSV file input".
 ・Transform name             ： CSV file input
-・Filename		             ： /data/data.csv
-・Delimiter		             ： ,
-・Enclosure		             ： "
+・Filename		               ： ${PROJECT_HOME}/data.csv
+・Delimiter		               ： ,
+・Enclosure		               ： "
 ・NIO buffer size            ： 50000
-・Laz conversion	         ： on
+・Laz conversion	           ： on
 ・Header row present         ： on
 ・Add filename to result     ： off
 ・The row number feild name	 ： (blank)
-・Running in parallel    	 ： off
+・Running in parallel    	   ： off
 ・New line possible in feild ： off
 ・File encoding              ： UTF-8
 ・Schema feffinition         ： (blank)
@@ -64,11 +64,11 @@ Click on the "+" icon at "Create a new metadata elemnt".
 Tab of "General"
 ・Connection type        : DuckDB
 ・Installed driver       : org.duckdb.DuckDBDriver
-・Username		         : (blank)
-・Password		         : (blank)
+・Username		           : (blank)
+・Password		           : (blank)
 ・Server host name       : (blank)
 ・Post number            : (blank)
-・Database name          : /data/duckdb.db
+・Database name          : ${PROJECT_HOME}/duckdb.db
 ・Manual conection url   : (blank)
 
 Tab of "Advanced"
@@ -133,11 +133,11 @@ Click on the "+" icon at "Create a new metadata elemnt".
 Tab of "General"
 ・Connection type        : DuckDB
 ・Installed driver       : org.duckdb.DuckDBDriver
-・Username		         : (blank)
-・Password		         : (blank)
+・Username		           : (blank)
+・Password		           : (blank)
 ・Server host name       : (blank)
 ・Post number            : (blank)
-・Database name          : /data/duckdb.db
+・Database name          : ${PROJECT_HOME}/duckdb.db
 ・Manual conection url   : (blank)
 
 Tab of "Advanced"
@@ -163,7 +163,7 @@ Tab of "General"
 ・Foce arrays in JSON         : off
 ・Foce single grouped Item    : off
 ・Pretty Pring Json           : off
-・Filennmae　　　　　　　　　　: /data/filename
+・Filennmae　　　　　　　　　　: ${PROJECT_HOME}/output/filename
 ・Append                      : off
 ・Nr rows in a block          : 0
 ・Create Parent folder        : on

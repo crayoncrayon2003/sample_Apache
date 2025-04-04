@@ -1,1 +1,1 @@
-sudo mkdir -p ./hop_data ./hop_files
+sudo mkdir -p ./hop_projects ./hop_files

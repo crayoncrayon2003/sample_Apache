@@ -1,1 +1,1 @@
-sudo rm -R ./hop_data ./hop_files
+sudo rm -R ./hop_projects ./hop_files

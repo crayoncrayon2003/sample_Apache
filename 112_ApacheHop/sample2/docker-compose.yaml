@@ -5,14 +5,14 @@ services:
     container_name: hop
     ports:
       - 8083:8080
-    volumes:
-      - ./hop_files:/files
-      - ./hop_data:/data
     environment:
       HOP_LOG_LEVEL: Basic
       HOP_PROJECT_FOLDER: /files/
       HOP_PROJECT_NAME: default
       HOP_RUN_CONFIG: local
+    volumes:
+      - ./hop_files:/files:rw,Z
+      - ./hop_projects:/home/hop/config/projects:rw,Z
 
   hopweb:
     image: apache/hop-web:2.12.0
@@ -20,5 +20,5 @@ services:
     ports:
       - 8082:8080
     volumes:
-      - ./hop_files:/files
-      - ./hop_data:/data
+      - ./hop_files:/files:rw,Z
+      - ./hop_projects:/usr/local/tomcat/webapps/ROOT/config/projects/default:rw,Z

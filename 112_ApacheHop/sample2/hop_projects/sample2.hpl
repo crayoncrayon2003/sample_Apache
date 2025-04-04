@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>sample2</name>
+    <name_sync_with_filename>Y</name_sync_with_filename>
+    <description/>
+    <extended_description/>
+    <pipeline_version/>
+    <pipeline_type>Normal</pipeline_type>
+    <parameters>
+    </parameters>
+    <capture_transform_performance>N</capture_transform_performance>
+    <transform_performance_capturing_delay>1000</transform_performance_capturing_delay>
+    <transform_performance_capturing_size_limit>100</transform_performance_capturing_size_limit>
+    <created_user>-</created_user>
+    <created_date>2025/04/04 06:10:08.360</created_date>
+    <modified_user>-</modified_user>
+    <modified_date>2025/04/04 06:10:08.360</modified_date>
+  </info>
+  <notepads>
+  </notepads>
+  <order>
+    <hop>
+      <from>Table input</from>
+      <to>Enhanced JSON Output</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Enhanced JSON Output</name>
+    <type>EnhancedJsonOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <outputValue>outputValue</outputValue>
+    <jsonBloc>result</jsonBloc>
+    <operation_type>writetofile</operation_type>
+    <use_arrays_with_single_instance>N</use_arrays_with_single_instance>
+    <use_single_item_per_group>N</use_single_item_per_group>
+    <json_prittified>N</json_prittified>
+    <encoding>UTF-8</encoding>
+    <addtoresult>N</addtoresult>
+    <file>
+      <name>${PROJECT_HOME}/sample2_output</name>
+      <split_output_after>0</split_output_after>
+      <extention>json</extention>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <create_parent_folder>N</create_parent_folder>
+      <doNotOpenNewFileInit>N</doNotOpenNewFileInit>
+    </file>
+    <additional_fields>
+      <json_size_field/>
+    </additional_fields>
+    <key_fields>
+    </key_fields>
+    <fields>
+      <field>
+        <name>id</name>
+        <element>id</element>
+        <json_fragment>N</json_fragment>
+        <is_without_enclosing>N</is_without_enclosing>
+        <remove_if_blank>N</remove_if_blank>
+      </field>
+      <field>
+        <name>type</name>
+        <element>type</element>
+        <json_fragment>N</json_fragment>
+        <is_without_enclosing>N</is_without_enclosing>
+        <remove_if_blank>N</remove_if_blank>
+      </field>
+      <field>
+        <name>name</name>
+        <element>name</element>
+        <json_fragment>Y</json_fragment>
+        <is_without_enclosing>N</is_without_enclosing>
+        <remove_if_blank>N</remove_if_blank>
+      </field>
+      <field>
+        <name>address</name>
+        <element>address</element>
+        <json_fragment>Y</json_fragment>
+        <is_without_enclosing>N</is_without_enclosing>
+        <remove_if_blank>N</remove_if_blank>
+      </field>
+      <field>
+        <name>num</name>
+        <element>num</element>
+        <json_fragment>Y</json_fragment>
+        <is_without_enclosing>N</is_without_enclosing>
+        <remove_if_blank>N</remove_if_blank>
+      </field>
+      <field>
+        <name>lat</name>
+        <element>latitude</element>
+        <json_fragment>Y</json_fragment>
+        <is_without_enclosing>N</is_without_enclosing>
+        <remove_if_blank>N</remove_if_blank>
+      </field>
+      <field>
+        <name>lon</name>
+        <element>longitude</element>
+        <json_fragment>Y</json_fragment>
+        <is_without_enclosing>N</is_without_enclosing>
+        <remove_if_blank>N</remove_if_blank>
+      </field>
+    </fields>
+    <attributes/>
+    <GUI>
+      <xloc>304</xloc>
+      <yloc>272</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Table input</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>duckdb_memory_reader</connection>
+    <execute_each_row>N</execute_each_row>
+    <limit>0</limit>
+    <sql>SELECT
+  CONCAT('urn:ngsi-ld:test:', LPAD(CAST(ROW_NUMBER() OVER (ORDER BY name) AS VARCHAR), 3, '0')) AS id,
+  'test' AS type,
+  JSON_OBJECT('type', 'Text', 'value', name    ) AS name,
+  JSON_OBJECT('type', 'Text', 'value', address ) AS address,
+  JSON_OBJECT('type', 'Text', 'value', num     ) AS num,
+  JSON_OBJECT('type', 'Text', 'value', lon     ) AS lon,
+  JSON_OBJECT('type', 'Text', 'value', lat     ) AS lat
+FROM csvtable;
+</sql>
+    <variables_active>N</variables_active>
+    <attributes/>
+    <GUI>
+      <xloc>160</xloc>
+      <yloc>272</yloc>
+    </GUI>
+  </transform>
+  <transform_error_handling>
+  </transform_error_handling>
+  <attributes/>
+</pipeline>
