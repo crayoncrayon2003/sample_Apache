@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  drill:
+    image: apache/drill:latest
+    hostname: drill
+    container_name: drill
+    restart: unless-stopped
+    ports:
+      - "8047:8047"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./data:/data
+
+volumes:
+  data:
