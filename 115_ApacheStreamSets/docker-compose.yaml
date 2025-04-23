@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  streamsets:
+    # image: streamsets/datacollector:4.2.0  # Version 4.0 or later is available as a paid service. It is available with Control Hub.
+    image: streamsets/datacollector:3.22.2   # Version 3.22.2 or earlier is available as open source. It is available without Control Hub.
+    container_name: streamsets
+    ports:
+      - "18630:18630"
+    environment:
+      - SDC_JAVA_OPTS=-Xms512m -Xmx1024m
+    tmpfs:
+      - /data
+
+
+
