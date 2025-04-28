@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  tika-server:
+    image: apache/tika:3.1.0.0-full
+    container_name: tika-server
+    ports:
+      - "9997:9998"
+    volumes:
+      - ./data:/data
+    environment:
+      - TIKA_SERVER_JVM_OPTS=-Xmx1024m
+    restart: unless-stopped
