@@ -17,7 +17,7 @@ sudo update-alternatives --config java
 
 open bashrc
 ```
-sudo vim ~/.bashrc
+vim ~/.bashrc
 ```
 
 
@@ -46,23 +46,23 @@ java -version
 ### Install
 
 ```
-wget https://dlcdn.apache.org/spark/spark-3.5.5/spark-3.5.5-bin-hadoop3.tgz
-sudo mkdir -p /opt/spark-3-5-5
-sudo tar -xvzf spark-3.5.5-bin-hadoop3.tgz -C /opt/spark-3-5-5 --strip-components=1
-ls /opt/spark-3-5-5
+wget https://dlcdn.apache.org/spark/spark-3.5.8/spark-3.5.8-bin-hadoop3.tgz
+sudo tar -xzf spark-3.5.8-bin-hadoop3.tgz -C /opt/
+sudo mv /opt/spark-3.5.8-bin-hadoop3 /opt/spark-3-5-8
+ls /opt/spark-3-5-8/bin/
 ```
 
 ## Set path
 
 open bashrc
 ```
-sudo vim ~/.bashrc
+vim ~/.bashrc
 ```
 
 
 edit follow
 ```
-export SPARK_HOME=/opt/spark-3-5-5
+export SPARK_HOME=/opt/spark-3-5-8
 export PATH=$SPARK_HOME/bin:$PATH
 export PATH=$SPARK_HOME/sbin:$PATH
 export PYSPARK_PYTHON=/usr/bin/python3.12
@@ -78,9 +78,9 @@ source ~/.bashrc
 ## confirm
 ```
 spark-shell --version
-> version 3.5.5
+> version 3.5.8
 spark-submit --version
-> version 3.5.5
+> version 3.5.8
 ```
 
 # python
