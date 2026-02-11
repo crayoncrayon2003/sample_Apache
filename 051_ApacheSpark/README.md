@@ -45,6 +45,9 @@ java -version
 ## spark
 ### Install
 
+check latest spark version. ref https://dlcdn.apache.org/spark/  
+folloing "spark-3-5-8"
+
 ```
 wget https://dlcdn.apache.org/spark/spark-3.5.8/spark-3.5.8-bin-hadoop3.tgz
 sudo tar -xzf spark-3.5.8-bin-hadoop3.tgz -C /opt/
@@ -97,7 +100,7 @@ source env/bin/activate
 ## pip isntall
 ```
 pip install --upgrade pip setuptools
-pip install pyspark==3.5.5 py4j
+pip install pyspark==3.5.8 py4j
 ```
 
 ## run
