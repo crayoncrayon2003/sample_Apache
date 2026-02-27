@@ -24,6 +24,7 @@ vim ~/.bashrc
 edit follow
 ```
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+# export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
 ```
 
@@ -68,6 +69,8 @@ edit follow
 export SPARK_HOME=/opt/spark-3-5-8
 export PATH=$SPARK_HOME/bin:$PATH
 export PATH=$SPARK_HOME/sbin:$PATH
+# export PYSPARK_PYTHON=/usr/bin/python3.9
+# export PYSPARK_DRIVER_PYTHON=/usr/bin/python3.9
 export PYSPARK_PYTHON=/usr/bin/python3.12
 export PYSPARK_DRIVER_PYTHON=/usr/bin/python3.12
 ```
