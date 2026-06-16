@@ -2,17 +2,22 @@
 /**/env/
 /**/venv/
 
-# docker compose runtime volume data (host bind mounts)
 013_ApachePulsar/data/
+
 031_ApacheHive/hdfs/
 031_ApacheHive/metastore-postgresql/
 031_ApacheHive/employee/
+
 032_ApacheHadoop/data/
 033_ApacheCassandra/data/
 034_ApacheIceberg/sample1/warehouse/
 034_ApacheIceberg/sample2/warehouse/
 035_ApacheHBase/data/
 038_ApacheCouchDB/data/
+
+063_ApacheMahout/target/
+064_ApacheCommonsMath/target/
+
 111_ApacheHop/sample1/hop_files/
 111_ApacheHop/sample2/hop_files/
 112_ApacheNiFi/sample01_Single/nifi/
