@@ -1,5 +1,5 @@
 # build and run
-```
+```bash
 docker compose up -d
 ```
 
@@ -13,7 +13,7 @@ Access the following URL using the Web browser.
 https://www.ibm.com/products/streamsets
 
 # down
-```
+```bash
 docker compose down
 ```
 

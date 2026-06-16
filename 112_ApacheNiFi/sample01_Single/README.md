@@ -1,26 +1,26 @@
 
 # make dir
-```
+```bash
 mkdir -p ./nifi/fileprocessor ./nifi/database ./nifi/flow_storage
 ```
 
 # build and run
-```
+```bash
 sudo docker compose up -d
 ```
 wait for 5 minutes.
 
 Access the following URL using the Web browser.
-```
+```bash
 http://localhost:8080/nifi/
 ```
 
 # control using python
-```
+```bash
 pip install nipyapi
 ```
 
 # down
-```
+```bash
 docker compose down
 ```

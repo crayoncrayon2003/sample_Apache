@@ -2,13 +2,13 @@
 https://streampipes.apache.org/download/
 
 # Install
-```
+```bash
 pip install requests
 pip install fastapi uvicorn
 ```
 
 # build and run
-```
+```bash
 docker compose up -d
 ```
 # How to user
@@ -28,7 +28,7 @@ Home -> Pipelines & Functions -> New Pipeline
 
 
 # down
-```
+```bash
 docker compose down
 ```
 

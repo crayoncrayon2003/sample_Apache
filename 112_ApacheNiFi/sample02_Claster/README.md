@@ -1,19 +1,19 @@
 
 # make dir
-```
+```bash
 mkdir -p ./nifi0/fileprocessor ./nifi0/database ./nifi0/flow_storage
 mkdir -p ./nifi1/fileprocessor ./nifi1/database ./nifi1/flow_storage
 mkdir -p ./nifi2/fileprocessor ./nifi2/database ./nifi2/flow_storage
 ```
 
 # build and run
-```
+```bash
 sudo docker compose up --scale nifi=3 -d
 ```
 wait for 5 minutes.
 
 check container
-```
+```bash
 sudo docker ps -a
 > d69cf139e38d   apache/nifi:latest ...  Up 8 seconds ...  nifi1
 > 2f25451952b9   apache/nifi:latest ...  Up 8 seconds ...  nifi2
@@ -27,6 +27,6 @@ Access the following URL using the Web browser.
 
 
 # down
-```
+```bash
 docker compose down
 ```

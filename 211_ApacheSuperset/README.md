@@ -2,7 +2,7 @@
 * https://superset.apache.org/docs/quickstart
 
 # build and run
-```
+```bash
 git clone https://github.com/apache/superset
 cd superset
 git checkout tags/4.1.1

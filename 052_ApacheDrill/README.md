@@ -1,10 +1,10 @@
 # pre process
-```
+```bash
 ./00_mkdir.sh
 ```
 
 # build and run
-```
+```bash
 docker compose up -d
 ```
 
@@ -48,17 +48,17 @@ Storage -> dfs -> Storage -> Upload
 
 
 ## Setting: Query
-```
+```bash
 SELECT * FROM dfs.`data/data.csv` LIMIT 10;
 ```
 
 # down
-```
+```bash
 docker compose down
 ```
 
 # post process
-```
+```bash
 ./00_mkdir.sh
 ```
 

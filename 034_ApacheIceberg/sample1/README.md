@@ -2,7 +2,7 @@
 * https://iceberg.apache.org/spark-quickstart/#docker-compose
 
 # build and run
-```
+```bash
 docker compose up -d
 ```
 
@@ -26,12 +26,12 @@ http://localhost:8888
 Iceberg - Getting Started.ipynb
 
 # down
-```
+```bash
 docker compose down
 ```
 
 # post process
-```
+```bash
 ./99_rmdir.sh
 ```
 

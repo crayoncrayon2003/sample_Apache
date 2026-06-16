@@ -1,7 +1,7 @@
 # Java
 ## install
 
-```
+```bash
 sudo apt update
 sudo apt install openjdk-11-jdk wget tar -y
 java -version
@@ -9,20 +9,20 @@ java -version
 
 ## Select Java version
 
-```
+```bash
 sudo update-alternatives --config java
 ```
 
 ## Set path
 
 open bashrc
-```
+```bash
 vim ~/.bashrc
 ```
 
 
 edit follow
-```
+```bash
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 # export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export PATH=$JAVA_HOME/bin:$PATH
@@ -30,13 +30,13 @@ export PATH=$JAVA_HOME/bin:$PATH
 
 
 enable bashrc
-```
+```bash
 source ~/.bashrc
 ```
 
 ## confirm
 
-```
+```bash
 java -version
 > openjdk version "11.0.26" 2025-01-21
 > OpenJDK Runtime Environment (build 11.0.26+4-post-Ubuntu-1ubuntu124.04)
@@ -49,7 +49,7 @@ java -version
 check latest spark version. ref https://dlcdn.apache.org/spark/  
 folloing "spark-3-5-8"
 
-```
+```bash
 wget https://dlcdn.apache.org/spark/spark-3.5.8/spark-3.5.8-bin-hadoop3.tgz
 sudo tar -xzf spark-3.5.8-bin-hadoop3.tgz -C /opt/
 sudo mv /opt/spark-3.5.8-bin-hadoop3 /opt/spark-3-5-8
@@ -59,7 +59,7 @@ ls /opt/spark-3-5-8/bin/
 ## Set path
 
 open bashrc
-```
+```bash
 vim ~/.bashrc
 ```
 
@@ -77,12 +77,12 @@ export PYSPARK_DRIVER_PYTHON=/usr/bin/python3.12
 
 
 enable bashrc
-```
+```bash
 source ~/.bashrc
 ```
 
 ## confirm
-```
+```bash
 spark-shell --version
 > version 3.5.8
 spark-submit --version
@@ -91,32 +91,32 @@ spark-submit --version
 
 # python
 ## create venv & activate venv
-```
+```bash
 python3.12 -m venv env
 ```
 
 ## activate venv
-```
+```bash
 source env/bin/activate
 ```
 
 ## pip isntall
-```
+```bash
 pip install --upgrade pip setuptools
 pip install pyspark==3.5.8 py4j
 ```
 
 ## run
-```
+```bash
 python3.12 filename.py
 ```
 
-```
+```bash
 spark-submit filename.py
 ```
 
 ## deactivate venv
-```
+```bash
 deactivate
 ```
 

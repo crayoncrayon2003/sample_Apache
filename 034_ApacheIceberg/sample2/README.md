@@ -1,16 +1,16 @@
 # pre process
-```
+```bash
 ./00_mkdir.sh
 ```
 
 # build and run
-```
+```bash
 docker compose up -d
 ```
 
 # Setting up
 Setting up PostgreSQL / MinIO / Trino
-```
+```bash
 python 01_setup.py
 ```
 
@@ -31,13 +31,13 @@ New -> python3(ipykernel) ->
 
 
 ## Create catalog
-```
-!pip install --upgrade pip
-!pip install --upgrade pyiceberg
+```bash
+pip install --upgrade pip
+pip install --upgrade pyiceberg
 ```
 
 ## Create catalog
-```
+```bash
 from pyiceberg.catalog.rest import RestCatalog
 
 catalog = RestCatalog(
@@ -48,7 +48,7 @@ catalog = RestCatalog(
 ```
 
 ## Create namespace
-```
+```bash
 from pyiceberg.catalog import Identifier
 
 namespaces = catalog.list_namespaces()
@@ -68,7 +68,7 @@ catalog.list_namespaces()
 ```
 
 ## Create Table
-```
+```bash
 from pyiceberg.schema import Schema, NestedField
 from pyiceberg.types import LongType, StringType, TimestampType
 
@@ -84,12 +84,12 @@ catalog.create_table(table_identifier, schema)
 
 ```
 ## Confirm Table
-```
+```bash
 print(catalog.list_tables("default"))
 ```
 
 ## Insert data
-```
+```bash
 from pyiceberg.io.pyarrow import write_table
 import pyarrow as pa
 import datetime
@@ -104,12 +104,12 @@ write_table(data, catalog.load_table(("default", "sample_table")))
 ```
 
 # down
-```
+```bash
 docker compose down
 ```
 
 # post process
-```
+```bash
 ./99_rmdir.sh
 ```
 

@@ -1,5 +1,5 @@
 # install
-```
+```bash
 python3.12 -m venv env
 source env/bin/activate
 pip install --upgrade pip setuptools wheel

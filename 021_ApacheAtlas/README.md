@@ -1,12 +1,12 @@
 
 # build and run
-```
+```bash
 docker compose up -d
 ```
 
 wait for 5 minutes.
 Access the following URL using the Web browser.
-```
+```bash
 http://localhost:21000/login.jsp
 ```
 * user: admin
@@ -14,7 +14,7 @@ http://localhost:21000/login.jsp
 
 
 # down
-```
+```bash
 docker compose down
 ```
 

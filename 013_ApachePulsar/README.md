@@ -1,21 +1,21 @@
 # make dir
-```
+```bash
 mkdir -p ./data/bookkeeper
 ```
 
 # build and run
-```
+```bash
 docker compose up -d
 ```
 
 # python
 ## pip install
-```
+```bash
 pip install pulsar
 ```
 
 # down
-```
+```bash
 docker compose down
 ```
 

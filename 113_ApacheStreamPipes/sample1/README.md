@@ -2,7 +2,7 @@
 https://streampipes.apache.org/download/
 
 # build and run
-```
+```bash
 docker compose up -d
 ```
 
@@ -13,7 +13,7 @@ Access the following URL using the Web browser.
 * pass : admin
 
 # down
-```
+```bash
 docker compose down
 ```
 

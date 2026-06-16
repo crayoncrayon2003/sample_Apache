@@ -1,10 +1,10 @@
 # pre process
-```
+```bash
 ./00_mkdir.sh
 ```
 
 # build and run
-```
+```bash
 docker compose up -d
 ```
 Access the following URL using the Web browser.
@@ -192,12 +192,12 @@ default
 
 
 # down
-```
+```bash
 docker compose down
 ```
 
 # post process
-```
+```bash
 ./00_mkdir.sh
 ```
 
