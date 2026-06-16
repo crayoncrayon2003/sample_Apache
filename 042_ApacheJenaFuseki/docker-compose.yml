@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  fuseki:
+    image: stain/jena-fuseki:latest
+    container_name: fuseki
+    ports:
+      - "3030:3030"
+    environment:
+      - ADMIN_PASSWORD=password
+      - FUSEKI_DATASET_1=ds
+    volumes:
+      - fuseki_data:/fuseki
+    restart: unless-stopped
+
+volumes:
+  fuseki_data: {}

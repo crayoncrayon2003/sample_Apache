@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  pinot:
+    image: apachepinot/pinot:latest
+    container_name: pinot-quickstart
+    command: "QuickStart -type batch"
+    ports:
+      - "9000:9000"   # Controller Web UI
+      - "8000:8000"   # Broker (query)
+    restart: unless-stopped

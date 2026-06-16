@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  hbase:
+    image: harisekhon/hbase:latest
+    container_name: hbase
+    hostname: hbase
+    ports:
+      - "16010:16010"   # HBase Master Web UI
+      - "9090:9090"     # Thrift API (used by happybase)
+      - "2181:2181"     # ZooKeeper
+    volumes:
+      - ./data:/hbase-data
+    restart: unless-stopped
