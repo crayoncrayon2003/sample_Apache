@@ -1,9 +1,10 @@
-version: "3.8"
 services:
   spark-master:
-    image: bitnami/spark:3.5.3
+    build: .
+    image: spark-py312:3.5.8
     hostname: spark-master
     container_name: spark-master
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master", "--host", "spark-master", "--port", "7077", "--webui-port", "8080"]
     restart: on-failure
     expose:
       - "8080"
@@ -30,9 +31,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   spark-worker1:
-    image: bitnami/spark:3.5.3
+    image: spark-py312:3.5.8
     hostname: spark-worker1
     container_name: spark-worker1
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "--cores", "1", "--memory", "1G", "--webui-port", "8081", "spark://spark-master:7077"]
     restart: on-failure
     depends_on:
       - spark-master
@@ -59,9 +61,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   spark-worker2:
-    image: bitnami/spark:3.5.3
+    image: spark-py312:3.5.8
     hostname: spark-worker2
     container_name: spark-worker2
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "--cores", "1", "--memory", "1G", "--webui-port", "8081", "spark://spark-master:7077"]
     restart: on-failure
     depends_on:
       - spark-master

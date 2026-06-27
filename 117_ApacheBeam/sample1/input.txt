@@ -1,0 +1,4 @@
+hello apache beam
+this is a sample input
+apache beam runs on python
+each line is converted to upper case

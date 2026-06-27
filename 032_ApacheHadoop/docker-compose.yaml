@@ -69,8 +69,13 @@ services:
     restart: always
     networks:
       - hdfs-network
+    ports:
+      - 9864:9864
     environment:
       <<: *hadoop_environment
+      # Advertise localhost so the WebHDFS redirect is reachable from the host.
+      HDFS-SITE.XML_dfs.datanode.hostname: localhost
+      HDFS-SITE.XML_dfs.datanode.http.address: 0.0.0.0:9864
       #ENSURE_STANDBY_NAMENODE_DIR: /tmp/hadoop-hadoop/dfs/name
     volumes:
       - ./data/datanode1:/opt/hadoop/data/dataNode
@@ -92,8 +97,13 @@ services:
     restart: always
     networks:
       - hdfs-network
+    ports:
+      - 9865:9865
     environment:
       <<: *hadoop_environment
+      # Advertise localhost on a distinct port so it doesn't collide with datanode1.
+      HDFS-SITE.XML_dfs.datanode.hostname: localhost
+      HDFS-SITE.XML_dfs.datanode.http.address: 0.0.0.0:9865
       #ENSURE_STANDBY_NAMENODE_DIR: /tmp/hadoop-hadoop/dfs/name
     volumes:
       - ./data/datanode2:/opt/hadoop/data/dataNode
@@ -103,7 +113,7 @@ services:
       namenode:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD", "curl", "http://localhost:9864" ]
+      test: [ "CMD", "curl", "http://localhost:9865" ]
       interval: 10s
       timeout: 5s
       retries: 3

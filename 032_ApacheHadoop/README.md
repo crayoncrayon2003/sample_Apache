@@ -18,6 +18,11 @@ http://localhost:9870
 pip install hdfs
 ```
 
+# run sample
+```bash
+python3.12 sample.py 
+```
+
 # down
 ```bash
 docker compose down

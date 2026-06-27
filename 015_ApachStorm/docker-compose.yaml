@@ -12,11 +12,11 @@ services:
     ports:
       - "2181:2181"
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-      ALLOW_ANONYMOUS_LOGIN: yes
+      # The official zookeeper image uses ZOO_* env vars; allow the ruok 4-letter word for healthcheck.
+      ZOO_4LW_COMMANDS_WHITELIST: ruok
     healthcheck:
-      test: nc -z localhost 2181 || exit -1
+      # Proper request/response probe; avoids the benign "probably closed the socket" INFO noise from nc -z.
+      test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep -q imok"]
       interval: 10s
       timeout: 5s
       retries: 3

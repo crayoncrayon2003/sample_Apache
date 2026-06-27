@@ -1,8 +1,3 @@
-# make dir
-```bash
-mkdir -p ./gitea/config ./gitea/data
-```
-
 # build and run
 ```bash
 docker compose up -d

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   ray-head:
-    image: rayproject/ray:latest
+    image: rayproject/ray:2.40.0-py312
     hostname: ray-head
     container_name: ray-head
     expose:
@@ -27,7 +27,7 @@ services:
           memory: '1g'
 
   ray-worker:
-    image: rayproject/ray:latest
+    image: rayproject/ray:2.40.0-py312
     depends_on:
       - ray-head
     networks:

@@ -15,7 +15,7 @@ def main():
             "connector.class": "com.example.CustomSourceConnector",
             "tasks.max": "1",
             "topics": "my-kafka-topic",
-            "api.url": "http://172.28.164.85:8081/",
+            "api.url": "http://{}:8081/".format(config_ini['DEFAULT']['DOCKER_HOST_IP']),
             "poll.interval.ms":"2000"
         }
     }

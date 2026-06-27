@@ -8,7 +8,7 @@ import random
 
 config_ini = configparser.ConfigParser()
 config_ini.read(os.path.join(os.path.dirname(os.path.abspath(__file__)),"config.ini"), encoding='utf-8')
-HOST = config_ini['DEFAULT']['HOST_IP']
+HOST = "0.0.0.0"  # listen on all interfaces so the kafka-connect container can reach it
 PORT = 8081
 
 class HTTPHandler(BaseHTTPRequestHandler):

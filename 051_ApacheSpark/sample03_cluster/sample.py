@@ -1,5 +1,12 @@
 import os
 import sys
+
+# Pin the Python interpreter for both driver and executors BEFORE Spark starts.
+# These override any PYSPARK_PYTHON/PYSPARK_DRIVER_PYTHON inherited from the shell
+# (e.g. ~/.bashrc), which otherwise take precedence over the SparkConf settings.
+os.environ["PYSPARK_PYTHON"] = "/usr/bin/python3.12"
+os.environ["PYSPARK_DRIVER_PYTHON"] = "/usr/bin/python3.12"
+
 from pyspark.sql import SparkSession
 from pyspark import SparkConf
 from pyspark.sql.functions import*

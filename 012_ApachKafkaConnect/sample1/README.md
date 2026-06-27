@@ -47,13 +47,13 @@ python3.12 step02_SourceServer.py
 ### start
 ```bash
 python3.12 step11_StartHTTPSinkConnector.py
-python3.12 step12_StartHTTPSourceConnector.py 
+python3.12 step12_StartHTTPSourceConnector.py
 ```
 
 ### stop
 ```bash
-python3.12 step11_StartHTTPSinkConnector.py
-python3.12 step12_StartHTTPSourceConnector.py 
+python3.12 step13_StopHTTPSourceConnector.py
+python3.12 step14_StopHTTPSinkConnector.py
 ```
 
 ## Case2
@@ -65,8 +65,8 @@ python3.12 step12_StartHTTPSourceConnector.py
 
 ### stop
 ```bash
-python3.12 step11_StartHTTPSinkConnector.py
-python3.12 step12_StartHTTPSourceConnector.py 
+python3.12 step13_StopHTTPSourceConnector.py
+python3.12 step14_StopHTTPSinkConnector.py
 ```
 
 # down

@@ -1,0 +1,1 @@
+sudo mkdir -p ./nifi/fileprocessor ./nifi/database ./nifi/flow_storage

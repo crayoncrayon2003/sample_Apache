@@ -1,6 +1,6 @@
 from airflow import DAG
-from airflow.operators.dummy import DummyOperator
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.empty import EmptyOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from datetime import datetime
 
 def sample1_hello_airflow():
@@ -17,11 +17,11 @@ default_args = {
 dag = DAG(
     'hello_airflow',                # DAG名
     default_args=default_args,      # デフォルト引数
-    schedule_interval='* * * * *',  # 毎分実行
+    schedule='* * * * *',  # 毎分実行
 )
 
 # スタートタスクのタスク定義
-start_task = DummyOperator(
+start_task = EmptyOperator(
     task_id='start',
     dag=dag,
 )

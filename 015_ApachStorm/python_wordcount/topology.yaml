@@ -1,0 +1,37 @@
+# Flux topology definition (no Java code required).
+#
+#   TestWordSpout (Java, storm core)  --FIELDS[word]-->  count-bolt (Python)
+#
+# Submit with:
+#   storm jar app.jar org.apache.storm.flux.Flux topology.yaml
+# where app.jar = flux-core jar + resources/wordcount.py + resources/storm.py
+# (see submit.sh).
+
+name: "python-wordcount"
+
+config:
+  topology.workers: 1
+
+spouts:
+  - id: "word-spout"
+    # Built-in spout that emits a random word (field name: "word") repeatedly.
+    className: "org.apache.storm.testing.TestWordSpout"
+    parallelism: 1
+
+bolts:
+  - id: "count-bolt"
+    # FluxShellBolt runs an external (Python) process via the multilang protocol.
+    # The single constructor arg is the command run inside the worker, from the
+    # extracted resources/ directory.
+    className: "org.apache.storm.flux.wrappers.bolts.FluxShellBolt"
+    constructorArgs:
+      - ["python3", "wordcount.py"]
+    parallelism: 1
+
+streams:
+  - name: "word-spout --> count-bolt"
+    from: "word-spout"
+    to: "count-bolt"
+    grouping:
+      type: FIELDS
+      args: ["word"]

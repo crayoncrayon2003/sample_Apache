@@ -1,14 +1,24 @@
-version: '3.8'
-
 services:
   streamsets:
-    # image: streamsets/datacollector:4.2.0  # Version 4.0 or later is available as a paid service. It is available with Control Hub.
-    image: streamsets/datacollector:3.22.2   # Version 3.22.2 or earlier is available as open source. It is available without Control Hub.
+    # image: streamsets/datacollector:4.2.0  # Version 4.0+ is a paid service (needs Control Hub).
+    # image: streamsets/datacollector:3.22.2 # 3.17+ requires online activation (RSA-signed code
+    #                                          from StreamSets cloud) which is unreachable offline.
+    image: streamsets/datacollector:3.16.1   # Last line before the activation requirement -> works fully offline.
     container_name: streamsets
     ports:
       - "18630:18630"
     environment:
       - SDC_JAVA_OPTS=-Xms512m -Xmx1024m
+      # The image defaults to http.authentication=aster (StreamSets cloud login),
+      # which is unreachable offline. Use local file-based basic auth instead so the
+      # UI works with admin/admin and the REST API is scriptable.
+      - SDC_CONF_HTTP_AUTHENTICATION=basic
+    # StreamSets requires the max open file limit to be at least 32768
+    # (the default 1024 makes the container exit on startup).
+    ulimits:
+      nofile:
+        soft: 32768
+        hard: 32768
     tmpfs:
       - /data
 

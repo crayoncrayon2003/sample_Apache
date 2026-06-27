@@ -1,4 +1,4 @@
 # install
 ```bash
-pip install pyarrow
+pip install pyarrow pandas openpyxl duckdb
 ```

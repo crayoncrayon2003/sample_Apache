@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.python import PythonOperator  # 修正
+from airflow.providers.standard.operators.python import PythonOperator
 from datetime import datetime
 from sample3_task1_sender import sample3_task1_sender   # task1.pyからインポート
 from sample3_task2_receiver import sample3_task2_receiver  # task2.pyからインポート（修正）
@@ -14,7 +14,7 @@ default_args = {
 dag = DAG(
     'sample3',                              # DAG名
     default_args=default_args,              # デフォルト引数
-    schedule_interval='* * * * *',          # 毎分実行
+    schedule='* * * * *',          # 毎分実行
     catchup=False
 )
 

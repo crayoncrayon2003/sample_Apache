@@ -4,11 +4,6 @@ import ibis
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# Load SQL query
-def load_sql_query(file_path):
-    with open(file_path, 'r', encoding='utf-8') as f:
-        return f.read()
-
 # Load CSV file into PyArrow Table
 def load_csv():
     file_path = os.path.join(ROOT, 'data.csv')
@@ -19,30 +14,30 @@ def load_csv():
     return table
 
 def main():
-    print("\033[31m{0}\033[0m".format("under development"))
-
     table = load_csv()
     if table is None:
         return
 
-    # PostgreSQL connection via Ibis
+    # PostgreSQL connection via Ibis (matches docker-compose.yaml)
     conn = ibis.postgres.connect(
-        host="your_localhost",     # PostgreSQL host
-        port=5432,                 # PostgreSQL port
-        user="your_username",      # PostgreSQL user
-        password="your_password",  # PostgreSQL pass
-        database="your_database"   # PostgreSQL database
+        host="localhost",   # PostgreSQL host
+        port=5432,          # PostgreSQL port
+        user="ibis",        # PostgreSQL user
+        password="ibis",    # PostgreSQL pass
+        database="ibis",    # PostgreSQL database
     )
 
-    table_name = "your_table"
-    pg_table = conn.table(table_name)
+    # Load the CSV data into a PostgreSQL table (re-created on each run)
+    table_name = "recode"
+    conn.create_table(table_name, ibis.memtable(table), overwrite=True)
 
     # Query data using Ibis expressions
+    pg_table = conn.table(table_name)
     expr = pg_table.filter(pg_table.key1 == 2)
     result = expr.execute()
     print("Queried Data (Key1 = 2):\n", result)
 
-    conn.close()
+    conn.disconnect()
 
 if __name__ == '__main__':
     main()

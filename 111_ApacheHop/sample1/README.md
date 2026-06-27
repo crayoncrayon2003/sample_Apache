@@ -23,7 +23,7 @@ docker compose down
 
 # post process
 ```bash
-./00_mkdir.sh
+./99_rmdir.sh
 ```
 
 # refarence

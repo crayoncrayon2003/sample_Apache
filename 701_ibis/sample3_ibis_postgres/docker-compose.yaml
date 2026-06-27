@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: ibis-postgres
+    environment:
+      POSTGRES_USER: ibis
+      POSTGRES_PASSWORD: ibis
+      POSTGRES_DB: ibis
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "ibis"]
+      interval: 5s
+      timeout: 5s
+      retries: 10

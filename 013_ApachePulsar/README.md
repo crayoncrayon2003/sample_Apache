@@ -11,7 +11,13 @@ docker compose up -d
 # python
 ## pip install
 ```bash
-pip install pulsar
+pip install pulsar-client
+```
+
+## pip install
+```bash
+python step01_consumer.py
+python step02_producer.py
 ```
 
 # down

@@ -1,19 +1,6 @@
-version: '3.8'
 services:
-  zookeeper:
-    image: zookeeper:3.9.2
-    hostname: zookeeper
-    container_name: zookeeper
-    networks:
-      - atlas-network
-    ports:
-      - "2181:2181"
-    healthcheck:
-      test: nc -z localhost 2181 || exit -1
-      interval: 10s
-      timeout: 5s
-      retries: 3
-
+  # sburn/apache-atlas is an all-in-one image (embedded HBase/Solr/Kafka/ZooKeeper).
+  # No external zookeeper is needed; the default CMD runs atlas_start.py automatically.
   atlas:
     image: sburn/apache-atlas
     hostname: atlas
@@ -22,14 +9,13 @@ services:
       - "21000:21000"
     networks:
       - atlas-network
-    depends_on:
-      zookeeper:
-        condition: service_healthy
     healthcheck:
       test: nc -z localhost 21000 || exit -1
-      interval: 10s
+      # Atlas takes a few minutes to boot; don't mark unhealthy during startup.
+      start_period: 300s
+      interval: 15s
       timeout: 5s
-      retries: 3
+      retries: 10
 
 networks:
   atlas-network:

@@ -9,7 +9,7 @@ python3.12 -m pip install pandas sqlalchemy
 
 # mkdir
 ```bash
-mkdir -p ./data/namenode ./data/datanode1 ./data/datanode2
+mkdir -p ./hdfs/namenode ./hdfs/datanode ./metastore-postgresql/postgresql/data
 ```
 
 # build and run
@@ -17,11 +17,15 @@ mkdir -p ./data/namenode ./data/datanode1 ./data/datanode2
 docker compose up -d
 ```
 
-Access the following URL using the Web browser.
+Access the NameNode UI using the Web browser (Hadoop 2.7 uses port 50070, not 9870).
 ```bash
-http://localhost:9870
+http://localhost:50070
 ```
 
+# run sample
+```bash
+python3.12 sample.py 
+```
 
 # down
 ```bash

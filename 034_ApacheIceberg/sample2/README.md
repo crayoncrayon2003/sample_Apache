@@ -1,17 +1,6 @@
-# pre process
-```bash
-./00_mkdir.sh
-```
-
 # build and run
 ```bash
 docker compose up -d
-```
-
-# Setting up
-Setting up PostgreSQL / MinIO / Trino
-```bash
-python 01_setup.py
 ```
 
 # GUI
@@ -27,13 +16,11 @@ Iceberg data is stored in a bucket named warehouse.
 http://localhost:8080
 http://localhost:8888
 
-New -> python3(ipykernel) -> 
-
 
 ## Create catalog
 ```bash
 pip install --upgrade pip
-pip install --upgrade pyiceberg
+pip install --upgrade pyiceberg pyarrow
 ```
 
 ## Create catalog
@@ -43,7 +30,16 @@ from pyiceberg.catalog.rest import RestCatalog
 catalog = RestCatalog(
     name="iceberg",
     uri="http://iceberg-rest:8181",
-    warehouse="s3://warehouse/"
+    warehouse="s3://warehouse/",
+    **{
+        # MinIO S3 settings. path-style-access is required, otherwise MinIO
+        # returns HTTP 301 PermanentRedirect on upload (virtual-host addressing).
+        "s3.endpoint": "http://minio:9000",
+        "s3.access-key-id": "admin",
+        "s3.secret-access-key": "password",
+        "s3.path-style-access": "true",
+        "s3.region": "us-east-1",
+    },
 )
 ```
 
@@ -81,8 +77,8 @@ schema = Schema(
 )
 
 catalog.create_table(table_identifier, schema)
-
 ```
+
 ## Confirm Table
 ```bash
 print(catalog.list_tables("default"))
@@ -90,26 +86,33 @@ print(catalog.list_tables("default"))
 
 ## Insert data
 ```bash
-from pyiceberg.io.pyarrow import write_table
 import pyarrow as pa
 import datetime
 
-data = pa.Table.from_pydict({
-    "id": [1, 2, 3],
-    "name": ["Alice", "Bob", "Charlie"],
-    "created_at": [datetime.datetime.now()] * 3
-})
+table = catalog.load_table(("default", "sample_table"))
 
-write_table(data, catalog.load_table(("default", "sample_table")))
+# Build the Arrow table from the Iceberg schema so required/nullable and types
+# match exactly (avoids schema-compatibility errors on append).
+data = pa.Table.from_pydict(
+    {
+        "id": [1, 2, 3],
+        "name": ["Alice", "Bob", "Charlie"],
+        "created_at": [datetime.datetime.now()] * 3,
+    },
+    schema=table.schema().as_arrow(),
+)
+
+# pyiceberg has no write_table(); append via the table object.
+table.append(data)
+```
+
+## Confirm data
+```bash
+print(catalog.load_table(("default", "sample_table")).scan().to_arrow().to_pydict())
 ```
 
 # down
 ```bash
 docker compose down
-```
-
-# post process
-```bash
-./99_rmdir.sh
 ```
 

@@ -15,7 +15,7 @@ def main():
             "connector.class": "com.example.CustomSinkConnector",
             "tasks.max": "1",
             "topics": "my-kafka-topic",
-            "api.url": "http://172.28.164.85:8082/",
+            "api.url": "http://{}:8082/".format(config_ini['DEFAULT']['DOCKER_HOST_IP']),
             "poll.interval.ms":"1000",
             # "transforms": "ExtractData",
             # "transforms.ExtractData.type": "org.apache.kafka.connect.transforms.ExtractField$Value",

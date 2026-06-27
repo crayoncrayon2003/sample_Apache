@@ -17,7 +17,7 @@ def main():
             "topics": "my-kafka-topic",
             "transforms": "customTransform",
             "transforms.customTransform.type": "com.example.CustomTransform",
-            "api.url": "http://172.28.164.85:8081/",
+            "api.url": "http://{}:8081/".format(config_ini['DEFAULT']['DOCKER_HOST_IP']),
             "poll.interval.ms": "1000"
         }
     }

@@ -1,7 +1,7 @@
 
 # make dir
 ```bash
-mkdir -p ./nifi/fileprocessor ./nifi/database ./nifi/flow_storage
+/00_mkdir.sh
 ```
 
 # build and run
@@ -23,4 +23,9 @@ pip install nipyapi
 # down
 ```bash
 docker compose down
+```
+
+# post process
+```bash
+./99_rmdir.sh
 ```

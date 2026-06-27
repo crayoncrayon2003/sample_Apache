@@ -1,9 +1,9 @@
 # install
 ```bash
-python3.9 -m pip install ray pydantic==1.8.2 grpcio
+python3.12 -m pip install ray==2.40.0 grpcio
 ```
 
 # run
 ```bash
-python3.9 11_sample1.py
+python3.12 11_sample1.py
 ```

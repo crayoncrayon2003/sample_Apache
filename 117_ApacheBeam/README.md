@@ -1,7 +1,7 @@
 # Creating Virtual Environment
 ```bash
-$ python -m venv env
-$ source env/bin/activate
+$ python -m venv venv
+$ source venv/bin/activate
 (env) $ pip install --upgrade pip setuptools
 (env) $ pip install -r requirements.txt
 ```

@@ -1,0 +1,1 @@
+sudo rm -rf ./nifi/fileprocessor ./nifi/database ./nifi/flow_storage ./nifi

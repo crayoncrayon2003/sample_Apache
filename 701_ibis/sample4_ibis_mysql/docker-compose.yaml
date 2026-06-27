@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: ibis-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ibis
+      MYSQL_USER: ibis
+      MYSQL_PASSWORD: ibis
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uibis", "-pibis"]
+      interval: 5s
+      timeout: 5s
+      retries: 20

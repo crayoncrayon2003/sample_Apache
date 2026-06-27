@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   karavan:
     image: ghcr.io/apache/camel-karavan:4.8.1
@@ -41,8 +40,8 @@ services:
     networks:
       - karavan-network
     volumes:
-      - ./gitea/data:/var/lib/gitea
-      - ./gitea/config:/etc/gitea
+      - gitea_data:/var/lib/gitea
+      - gitea_config:/etc/gitea
     labels:
       - "org.apache.camel.karavan/type=internal"
     healthcheck:
@@ -72,3 +71,7 @@ networks:
     ipam:
       config:
         - subnet: 172.19.1.0/24
+
+volumes:
+  gitea_data:
+  gitea_config:

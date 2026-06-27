@@ -23,11 +23,14 @@ services:
 
   kafka:
     ################################################
-    # apache/kafka has KRaft mode enabled.
-    # For this reason, use bitnami/kafka
+    # apache/kafka has KRaft mode enabled (no ZooKeeper).
+    # The environment variables below are Confluent-style,
+    # so use confluentinc/cp-kafka, which pairs with ZooKeeper.
+    # (bitnami/kafka:3.3.2 is no longer published on Docker Hub
+    #  and bitnami expects KAFKA_CFG_* variables instead.)
     ################################################
     # image: apache/kafka:3.8.0
-    image: bitnami/kafka:3.3.2
+    image: confluentinc/cp-kafka:7.4.4
     hostname: kafka
     container_name: kafka
     expose:
@@ -46,7 +49,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
-      test: nc -z localhost 9092 || exit 1"
+      test: nc -z localhost 9092 || exit 1
       start_period: 10s
       interval: 5s
       timeout: 10s

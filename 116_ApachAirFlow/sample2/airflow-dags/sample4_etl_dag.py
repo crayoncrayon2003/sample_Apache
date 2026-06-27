@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
 from datetime import datetime
 
 # タスクのインポート
@@ -19,7 +19,7 @@ default_args = {
 dag = DAG(
     'sample4_etl',  # DAG名
     default_args=default_args,
-    schedule_interval='* * * * *',  # 毎分実行
+    schedule='* * * * *',  # 毎分実行
     catchup=False
 )
 

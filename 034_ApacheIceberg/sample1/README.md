@@ -13,14 +13,11 @@ MinIO is object storage that Amazon S3 compatible.
 * user : admin
 * pass : password
 
-Object Browser -> iceberg-bucket -> Upload  -> upload ./data/data.csv
-
-
 ## Spark
 Master
 http://localhost:8080
 
-Jupiter
+Jupyter
 http://localhost:8888
 
 Iceberg - Getting Started.ipynb
