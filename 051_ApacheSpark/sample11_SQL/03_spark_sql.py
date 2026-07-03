@@ -1,3 +1,11 @@
+# =============================================================
+#  Spark SQL (2) : SQL 文字列アプローチ
+#
+#  createOrReplaceTempView でDataFrameをテーブル化し、query.sql に
+#  書いたSQLを spark.sql() で実行して変換する。CSV/JSONを読み込み、
+#  スキーマの保存/復元も行う実践的なサンプル。
+#  (同じ処理をメソッドチェーンで書く例は 02_dataframe_api.py)
+# =============================================================
 import os
 import json
 from pyspark import SparkConf

@@ -8,7 +8,7 @@ from kafka.admin import NewTopic, KafkaAdminClient
 # kafka setting
 TOPIC_NAME = "text_topic"
 PARTITIONS = 1
-REPLICATION = 3
+REPLICATION = 1  # single-broker (KRaft single-node) なので 1。ブローカー台数を超える値は指定不可
 
 def main():
     # Create Kafka AdminClient

@@ -1,34 +1,14 @@
 # Apache Spark Samples
 
-A set of small samples to learn the whole picture of Apache Spark.
-Spark has **four main components** (SQL / Streaming / MLlib / GraphX) on top of the shared **Spark Core**.
+This is a sample of Apache Spark.
 
-```
-        ┌──────────────────────────────────────────────┐
- 1X     │  Spark SQL │ Streaming │  MLlib  │  GraphX     │  ← four main components
-        ├──────────────────────────────────────────────┤
-        │               Spark Core (RDD)                │
-        └──────────────────────────────────────────────┘
- 0X     Getting started: touch Spark lightly (local / cluster)
- 2X     Show the benefit of Spark by comparing with other libraries
-```
+Apache Spark consists of four components.
 
-## Structure
++ Spark SQL
++ Spark Streaming
++ Spark MLlib
++ Spark GraphX
 
-| Folder                                                       | Layer      | Description                                                     |
-| ------------------------------------------------------------ | ---------- | -------------------------------------------------------------- |
-| [sample01_local/](sample01_local/)                           | 0X intro   | Smallest local example (read / show / aggregate)               |
-| [sample02_cluster/](sample02_cluster/)                       | 0X intro   | Run on a Docker cluster                                        |
-| [sample11_SQL/](sample11_SQL/)                               | 1X         | **Spark SQL** — DataFrame API and `spark.sql()`               |
-| [sample12_streaming/](sample12_streaming/)                   | 1X         | **Structured Streaming** — with Kafka                         |
-| [sample13_Mlib/](sample13_Mlib/)                             | 1X         | **MLlib** — regression / classification (Pipeline)            |
-| [sample14_GraphX/](sample14_GraphX/)                         | 1X         | **GraphX / GraphFrames** — PageRank, connected components     |
-| [sample21_MLlib_vs_sklearn/](sample21_MLlib_vs_sklearn/)     | 2X compare | MLlib vs **scikit-learn** (measure where Spark starts to win)  |
-| [sample22_PySpark_vs_PyTorch/](sample22_PySpark_vs_PyTorch/) | 2X compare | PySpark+PyTorch vs **PyTorch alone** (distributed inference / training) |
-
-> Note: GraphX has no Python API, so PySpark uses a separate package, **GraphFrames**.
->
-> The 2X layer writes the same task with a single-machine library too, and measures the point where Spark becomes faster as the data grows. It also honestly shows that for small data the single-machine library is faster.
 
 The steps below are the local setup (Java / Spark / Python venv).
 
@@ -74,9 +54,9 @@ source ~/.bashrc
 
 ```bash
 java -version
-> openjdk version "11.0.26" 2025-01-21
-> OpenJDK Runtime Environment (build 11.0.26+4-post-Ubuntu-1ubuntu124.04)
-> OpenJDK 64-Bit Server VM (build 11.0.26+4-post-Ubuntu-1ubuntu124.04, mixed mode, sharing)
+> openjdk version "17.0.19" 2026-04-21
+> OpenJDK Runtime Environment (build 17.0.19+10-1-24.04.2-Ubuntu)
+> OpenJDK 64-Bit Server VM (build 17.0.19+10-1-24.04.2-Ubuntu, mixed mode, sharing)
 ```
 
 ## spark

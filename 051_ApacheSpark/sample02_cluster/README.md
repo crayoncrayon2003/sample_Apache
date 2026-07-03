@@ -1,31 +1,24 @@
 # make dir
-```
+```bash
 mkdir -p ./data/master ./data/worker1 ./data/worker2
 ```
 
-# install
-```
-sudo apt-get update
-sudo apt-get install python3-pip python3-dev openjdk-8-jdk build-essential
-python3.12 -m pip install pyspark py4j
-```
-
 # build and run
-```
+```bash
 docker compose up -d
 ```
 
 Access the following URL using the Web browser.
-```
+```bash
 http://localhost:8080/
 ```
 
-```
+```bash
 python3.12 sample.py
 ```
 
 
 # down
-```
+```bash
 docker compose down
 ```

@@ -1,3 +1,10 @@
+# =============================================================
+#  Spark SQL (1) : DataFrame API アプローチ
+#
+#  select / withColumn / where / orderBy などを「メソッドチェーン」で
+#  記述するスタイル。同じ処理を SQL 文字列で書いた例は 03_spark_sql.py。
+#  結果は parquet / csv に書き出す。
+# =============================================================
 import os
 from pyspark.sql.functions import*
 from pyspark.sql.session import SparkSession
