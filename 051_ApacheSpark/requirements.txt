@@ -7,3 +7,5 @@ kafka-python-ng==2.2.3
 graphframes==0.6
 scikit-learn==1.9.0
 torch==2.12.1
+matplotlib==3.11.0
+osmnx==2.1.0

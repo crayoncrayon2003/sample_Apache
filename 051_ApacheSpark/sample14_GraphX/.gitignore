@@ -1,1 +1,17 @@
-*.csv
+# Python
+__pycache__/
+*.pyc
+
+# --- Pattern 1 (01/02) ---
+00_input/
+00_output/
+
+# --- Pattern 2 (11/12/13) ---
+10_input/
+10_output/
+
+# --- Pattern 3 (21/22/23) ---
+20_input/
+20_output/
+# osmnx がダウンロード応答を保存するフォルダ
+cache/
