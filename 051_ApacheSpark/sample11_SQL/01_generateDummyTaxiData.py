@@ -5,8 +5,9 @@ import os
 random.seed(42)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-DUMMY_TAXIDATA = os.path.join(ROOT,"DummyTaxiData.csv")
-DUMMY_TYPEDATA = os.path.join(ROOT,"DummyPaymentType.csv")
+INPUT_DIR = os.path.join(ROOT,"00_input")
+DUMMY_TAXIDATA = os.path.join(INPUT_DIR,"DummyTaxiData.csv")
+DUMMY_TYPEDATA = os.path.join(INPUT_DIR,"DummyPaymentType.csv")
 
 TYPES = ['Cash', 'Card', 'Voucher', 'Other']
 
@@ -52,6 +53,7 @@ def main():
     dummyPaymentType = generateDummyPaymentType()
     print(dummyPaymentType.head())
 
+    os.makedirs(INPUT_DIR, exist_ok=True)
     dummyTaxiData.to_csv(DUMMY_TAXIDATA, index=False)
     dummyPaymentType.to_csv(DUMMY_TYPEDATA, index=False)
 
