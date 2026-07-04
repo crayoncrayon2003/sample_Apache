@@ -6,6 +6,7 @@
 #    2) Pipeline に前処理と推定器(LinearRegression)を並べる
 #    3) train/test に分割して fit / transform
 #    4) RegressionEvaluator で RMSE / R2 を評価する
+#    5) CrossValidator + ParamGridBuilder でハイパーパラメータを調整する
 # =============================================================
 import os
 from pyspark.sql import SparkSession
@@ -14,6 +15,7 @@ from pyspark.ml import Pipeline
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.regression import LinearRegression
 from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DUMMY_TAXIDATA = os.path.join(ROOT, "DummyTaxiData.csv")
@@ -41,24 +43,50 @@ def main():
 
     # 3) 学習/評価に分割
     train_df, test_df = df.randomSplit([0.8, 0.2], seed=42)
-    model = pipeline.fit(train_df)
+
+    # 4) ハイパーパラメータ調整（クロスバリデーションで最適な組み合わせを探す）
+    #    - regParam       : 正則化の強さ
+    #    - elasticNetParam: L1(=1.0) と L2(=0.0) のブレンド比
+    #    ParamGridBuilder が総当たりのグリッド（3 x 3 = 9通り）を作る。
+    evaluator = RegressionEvaluator(labelCol="label", predictionCol="prediction", metricName="rmse")
+    param_grid = (
+        ParamGridBuilder()
+        .addGrid(lr.regParam, [0.01, 0.1, 1.0])
+        .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
+        .build()
+    )
+    cv = CrossValidator(
+        estimator=pipeline,
+        estimatorParamMaps=param_grid,
+        evaluator=evaluator,      # RMSE 最小のモデルを選ぶ（RMSE は小さいほど良い）
+        numFolds=3,
+        seed=42,
+    )
+
+    print("====  Cross validation (grid size = {0})  ====".format(len(param_grid)))
+    cv_model = cv.fit(train_df)          # 各パラメータで学習し、最良モデルを保持
+    model = cv_model.bestModel           # 最適パラメータで学習し直された Pipeline モデル
     predictions = model.transform(test_df)
 
     print("====  Predictions (sample)  ====")
     predictions.select("features", "label", "prediction").show(10, truncate=False)
 
-    # 4) 評価
-    evaluator = RegressionEvaluator(labelCol="label", predictionCol="prediction")
+    # 5) 評価（テストデータで最終性能を測る）
     rmse = evaluator.evaluate(predictions, {evaluator.metricName: "rmse"})
     r2 = evaluator.evaluate(predictions, {evaluator.metricName: "r2"})
-    print("====  Metrics  ====")
+    print("====  Metrics (test)  ====")
     print("RMSE = {0:.4f}".format(rmse))
     print("R2   = {0:.4f}".format(r2))
 
+    # 選ばれた最適ハイパーパラメータ
+    best_lr = model.stages[-1]
+    print("====  Best params  ====")
+    print("regParam        = {0}".format(best_lr.getRegParam()))
+    print("elasticNetParam = {0}".format(best_lr.getElasticNetParam()))
+
     # 学習された係数
-    lr_model = model.stages[-1]
-    print("coefficients = {0}".format(lr_model.coefficients))
-    print("intercept    = {0:.4f}".format(lr_model.intercept))
+    print("coefficients = {0}".format(best_lr.coefficients))
+    print("intercept    = {0:.4f}".format(best_lr.intercept))
 
 
 if __name__ == "__main__":
