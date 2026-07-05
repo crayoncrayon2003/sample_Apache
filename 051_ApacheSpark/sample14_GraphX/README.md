@@ -17,6 +17,10 @@ python3.12 01_generateGraphData.py
 # 2) Analyze — always run with spark-submit and --packages
 spark-submit --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 02_graph_analysis.py
 
+# 2b) Same as above, but split the output: print/show -> out.txt, Spark logs -> spark.log
+spark-submit --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 02_graph_analysis.py > out.txt 2> spark.log
+
+
 # 3) Visualize before/after into 00_output/graph_before_after.png
 python3.12 03_visualize.py
 ```
@@ -40,6 +44,10 @@ python3.12 11_generateRoadNetwork.py
 
 # 2) Analyze — writes the results to 10_output/vertex_metrics.csv
 spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 12_road_analysis.py
+
+# 2b) Same as above, but split the output: print/show -> out.txt, Spark logs -> spark.log
+spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 12_road_analysis.py > out.txt 2> spark.log
+
 
 # 3) Visualize before/after into 10_output/road_before_after.png
 python3.12 13_visualize.py
