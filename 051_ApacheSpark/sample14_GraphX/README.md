@@ -64,6 +64,9 @@ python3.12 21_generateRoadNetwork_osmnx.py
 # 2) Analyze — writes 20_output/vertex_metrics.csv
 spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 22_road_analysis.py
 
+# 2b) Same as above, but split the output: print/show -> out.txt, Spark logs -> spark.log
+spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 22_road_analysis.py > out.txt 2> spark.log
+
 # 3) Visualize before/after into 20_output/road_before_after.png
 python3.12 23_visualize.py
 ```

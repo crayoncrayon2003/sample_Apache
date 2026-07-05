@@ -42,12 +42,12 @@ spark.sparkContext.setCheckpointDir(os.path.join(OUTPUT_DIR, "checkpoint"))
 
 
 def main():
-    vertices = spark.read.csv(VERTICES_CSV, header=True, inferSchema=True)   # 列: id, name
+    nodes = spark.read.csv(VERTICES_CSV, header=True, inferSchema=True)   # 列: id, name
     edges = spark.read.csv(EDGES_CSV, header=True, inferSchema=True)         # 列: src, dst, trips, distance
 
-    g = GraphFrame(vertices, edges)
+    g = GraphFrame(nodes, edges)
 
-    print("====  Vertices / Edges  ====")
+    print("====  Nodes / Edges  ====")
     g.vertices.show(truncate=False)
     g.edges.show(5, truncate=False)
 

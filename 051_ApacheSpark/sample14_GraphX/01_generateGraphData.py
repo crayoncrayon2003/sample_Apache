@@ -1,10 +1,10 @@
 # =============================================================
 #  グラフ用のダミーデータ生成（タクシーのゾーン間移動）
 #
-#  頂点(vertices) = タクシーの乗降ゾーン
+#  node = タクシーの乗降ゾーン
 #  辺(edges)      = あるゾーンから別ゾーンへの移動（trips 件数付き）
 #
-#  GraphFrames は "id" 列を持つ頂点DataFrameと、"src"/"dst" 列を持つ
+#  GraphFrames は "id" 列を持つ node の DataFrameと、"src"/"dst" 列を持つ
 #  辺DataFrame から構築する。ここではそれぞれ 00_input/ 配下の CSV に書き出す。
 # =============================================================
 import pandas as pd
@@ -18,7 +18,7 @@ INPUT_DIR = os.path.join(ROOT, "00_input")
 VERTICES_CSV = os.path.join(INPUT_DIR, "vertices.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
 
-# 乗降ゾーン（頂点）
+# 乗降ゾーン（node）
 ZONES = [
     ("Z01", "Airport"),
     ("Z02", "Downtown"),
@@ -31,7 +31,7 @@ ZONES = [
 ]
 
 
-def generate_vertices():
+def generate_nodes():
     return pd.DataFrame([{"id": zid, "name": name} for zid, name in ZONES])
 
 
@@ -53,15 +53,15 @@ def generate_edges(records):
 
 
 def main():
-    vertices = generate_vertices()
+    nodes = generate_nodes()
     edges = generate_edges(60)
 
     os.makedirs(INPUT_DIR, exist_ok=True)
-    vertices.to_csv(VERTICES_CSV, index=False)
+    nodes.to_csv(VERTICES_CSV, index=False)
     edges.to_csv(EDGES_CSV, index=False)
 
-    print("vertices ({0}):".format(len(vertices)))
-    print(vertices.head())
+    print("nodes ({0}):".format(len(nodes)))
+    print(nodes.head())
     print("edges ({0}):".format(len(edges)))
     print(edges.head())
 

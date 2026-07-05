@@ -2,6 +2,10 @@
 __pycache__/
 *.pyc
 
+# logs
+out.txt
+spark.log
+
 # --- Pattern 1 (01/02) ---
 00_input/
 00_output/

@@ -2,7 +2,7 @@
 #  実在の道路ネットワークを取得してグラフ化する（Pattern 2 / 1番系）
 #
 #  OpenStreetMap の Overpass API から、滋賀県全土の幹線道路を取得し、
-#  「交差点=頂点 / 道路区間=辺(距離付き)」のグラフに変換して 10_input/ に書き出す。
+#  「交差点=node / 道路区間=辺(距離付き)」のグラフに変換して 10_input/ に書き出す。
 #
 #  ・題材は滋賀県全域の幹線道路（高速・国道・主要地方道クラス）。
 #    県全体だと琵琶湖を囲む道路網の構造が見え、ネットワークとして理解しやすい。
@@ -84,7 +84,7 @@ def haversine_m(lat1, lon1, lat2, lon2):
 def build_graph(raw):
     """OSM の node/way を「交差点グラフ」に変換する。
 
-    道の途中にある通過点(次数2)はまとめ、交差点と端点だけを頂点として残す。
+    道の途中にある通過点(次数2)はまとめ、交差点と端点だけを node として残す。
     """
     coords = {e["id"]: (e["lat"], e["lon"]) for e in raw["elements"] if e["type"] == "node"}
     # 車道の way だけを対象にする（歩道・階段などは除外）
@@ -124,17 +124,20 @@ def build_graph(raw):
             la1, lo1 = coords[a]
             la2, lo2 = coords[b]
             acc += haversine_m(la1, lo1, la2, lo2)
+            # 交差点(または way の終端)に来たら、そこまでの区間を1本の辺として確定する
             if is_junction(b) or b == seq[-1]:
                 if start != b and acc > 0:
-                    length = round(acc, 1)
+                    length = round(acc, 1)                       # 区間長(メートル、小数第1位)
                     forward = {"src": start, "dst": b, "length_m": length, "name": name, "highway": highway}
+                    # oneway タグに応じて、辺を一方向 or 双方向で登録する（GraphFrame の src->dst 向きに反映するため）
                     if oneway in ("yes", "true", "1"):
-                        edge_rows.append(forward)
+                        edge_rows.append(forward)               # 順方向のみ
                     elif oneway == "-1":
-                        edge_rows.append({"src": b, "dst": start, "length_m": length, "name": name, "highway": highway})
-                    else:  # 双方向
+                        edge_rows.append({"src": b, "dst": start, "length_m": length, "name": name, "highway": highway})  # 逆方向のみ
+                    else:  # 双方向：往復2本の辺として持つ（後段の総延長はこれを1/2して実延長に戻す）
                         edge_rows.append(forward)
                         edge_rows.append({"src": b, "dst": start, "length_m": length, "name": name, "highway": highway})
+                    # 辺の端点(交差点)を node として登録する。緯度経度も一緒に持たせる
                     for nid in (start, b):
                         node_rows[nid] = {"id": nid, "lat": coords[nid][0], "lon": coords[nid][1]}
                 start = b
@@ -146,17 +149,24 @@ def build_graph(raw):
 
 
 def main():
+    # OSM の生応答を取得する（キャッシュがあれば再利用）
     raw = fetch_osm()
+    # 生データを「交差点=node / 道路区間=edge」のグラフに変換して DataFrame を得る
     nodes, edges = build_graph(raw)
 
+    # nodes / edges をそれぞれ CSV に書き出す（後段の 12/13 が読み込む）
     os.makedirs(INPUT_DIR, exist_ok=True)
     nodes.to_csv(NODES_CSV, index=False)
     edges.to_csv(EDGES_CSV, index=False)
 
+    # 取得結果のサマリ(地名・件数)と先頭数行を表示する
     print("place : {0}".format(PLACE))
+    print("=" * 40, "nodes", "=" * 40, )
     print("nodes (intersections): {0}".format(len(nodes)))
-    print("edges (road segments): {0}".format(len(edges)))
     print(nodes.head())
+
+    print("=" * 40, "edges", "=" * 40, )
+    print("edges (road segments): {0}".format(len(edges)))
     print(edges.head())
 
 

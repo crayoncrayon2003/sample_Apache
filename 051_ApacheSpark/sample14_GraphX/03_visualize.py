@@ -2,8 +2,8 @@
 #  GraphX / GraphFrames : 分析結果の可視化（分析前後の比較）
 #
 #  分析の前後の情報を可視化する
-#    分析前 : オリジナルの移動ネットワーク（全頂点は同じ大きさ・色）
-#    分析後 : を頂点の「大きさ」と「色の濃さ」に PageRank 反映 
+#    分析前 : オリジナルの移動ネットワーク（全 node は同じ大きさ・色）
+#    分析後 : を node の「大きさ」と「色の濃さ」に PageRank 反映 
 #
 #  Spark は不要。必要ライブラリ： networkx, matplotlib（+ pandas）
 # =============================================================
@@ -29,8 +29,8 @@ SURFACE = "#fcfcfb"        # 背景
 INK = "#0b0b0b"            # 主テキスト
 INK_SUB = "#52514e"        # 副テキスト
 EDGE_GRAY = "#b7b6af"      # 辺
-NODE_FLAT = "#d9d8d0"      # Before の頂点色（無彩色）
-NODE_RING = "#898781"      # 頂点の輪郭
+NODE_FLAT = "#d9d8d0"      # Before の node の色（無彩色）
+NODE_RING = "#898781"      # node の輪郭
 # PageRank 用シーケンシャル(青 淡→濃)。1色相 light→dark。
 BLUES = LinearSegmentedColormap.from_list(
     "brand_blues",
@@ -39,14 +39,14 @@ BLUES = LinearSegmentedColormap.from_list(
 
 
 def build_graph():
-    vertices = pd.read_csv(VERTICES_CSV)
+    nodes = pd.read_csv(VERTICES_CSV)
     edges = pd.read_csv(EDGES_CSV)
 
     # 平行辺（同じ src->dst の複数移動）は trips を合計して1本にまとめる
     agg = edges.groupby(["src", "dst"], as_index=False)["trips"].sum()
 
     g = nx.DiGraph()
-    for _, r in vertices.iterrows():
+    for _, r in nodes.iterrows():
         g.add_node(r["id"], name=r["name"])
     for _, r in agg.iterrows():
         g.add_edge(r["src"], r["dst"], trips=int(r["trips"]))
@@ -99,7 +99,7 @@ def main():
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 7))
     fig.patch.set_facecolor(SURFACE)
 
-    # Before：全頂点フラット（同じ大きさ・無彩色）
+    # Before：全 node フラット（同じ大きさ・無彩色）
     draw(ax1, g, pos, node_size=800, node_color=NODE_FLAT,
          title="Before — raw movement network")
 
