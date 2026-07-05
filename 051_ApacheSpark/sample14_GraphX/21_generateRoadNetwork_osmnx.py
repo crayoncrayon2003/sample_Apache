@@ -53,10 +53,11 @@ def main():
     # osmnx のノードは x=経度 / y=緯度、辺は length(メートル) を持つ
     node_rows = [{"id": n, "lat": float(d["y"]), "lon": float(d["x"])} for n, d in g.nodes(data=True)]
     edge_rows = [{
-        "src": u, "dst": v,
-        "length_m": round(float(d.get("length", 0.0)), 1),
-        "name": as_text(d.get("name")),
-        "highway": as_text(d.get("highway")),
+        "src"       : u,
+        "dst"       : v,
+        "length_m"  : round(float(d.get("length", 0.0)), 1),
+        "name"      : as_text(d.get("name")),
+        "highway"   : as_text(d.get("highway")),
     } for u, v, d in g.edges(data=True)]
 
     nodes = pd.DataFrame(node_rows)
