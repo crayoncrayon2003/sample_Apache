@@ -1,17 +1,17 @@
 # =============================================================
-#  実在の道路ネットワークを取得してグラフ化する（Pattern 2 / 1番系）
+#  実在の道路ネットワークを取得してグラフ化する
 #
 #  OpenStreetMap の Overpass API から、滋賀県全土の幹線道路を取得し、
-#  「交差点=node / 道路区間=辺(距離付き)」のグラフに変換して 10_input/ に書き出す。
+#  「交差点=node / 道路区間=辺(距離付き)」のグラフに変換して 01X_input/ に書き出す。
 #
 #  ・題材は滋賀県全域の幹線道路（高速・国道・主要地方道クラス）。
 #    県全体だと琵琶湖を囲む道路網の構造が見え、ネットワークとして理解しやすい。
 #  ・追加の地理ライブラリ(osmnx 等)は使わず、標準ライブラリだけで取得・変換する。
-#  ・生の応答は 10_input/osm_raw.json にキャッシュし、再実行やオフラインでも動く。
+#  ・生の応答は 01X_input/osm_raw.json にキャッシュし、再実行やオフラインでも動く。
 #
 #  出力:
-#    10_input/nodes.csv : id, lat, lon               （交差点）
-#    10_input/edges.csv : src, dst, length_m, name, highway （道路区間）
+#    01X_input/nodes.csv : id, lat, lon               （交差点）
+#    01X_input/edges.csv : src, dst, length_m, name, highway （道路区間）
 # =============================================================
 import os
 import json
@@ -22,7 +22,7 @@ from collections import Counter
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-INPUT_DIR = os.path.join(ROOT, "10_input")
+INPUT_DIR = os.path.join(ROOT, "01X_input")
 RAW_JSON = os.path.join(INPUT_DIR, "osm_raw.json")
 NODES_CSV = os.path.join(INPUT_DIR, "nodes.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
@@ -154,7 +154,7 @@ def main():
     # 生データを「交差点=node / 道路区間=edge」のグラフに変換して DataFrame を得る
     nodes, edges = build_graph(raw)
 
-    # nodes / edges をそれぞれ CSV に書き出す（後段の 12/13 が読み込む）
+    # nodes / edges をそれぞれ CSV に書き出す（後段の分析・可視化スクリプトが読み込む）
     os.makedirs(INPUT_DIR, exist_ok=True)
     nodes.to_csv(NODES_CSV, index=False)
     edges.to_csv(EDGES_CSV, index=False)

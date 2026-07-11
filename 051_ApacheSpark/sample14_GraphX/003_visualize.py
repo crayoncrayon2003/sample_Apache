@@ -17,8 +17,8 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize, LinearSegmentedColormap
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-INPUT_DIR = os.path.join(ROOT, "00_input")
-OUTPUT_DIR = os.path.join(ROOT, "00_output")
+INPUT_DIR = os.path.join(ROOT, "00X_input")
+OUTPUT_DIR = os.path.join(ROOT, "00X_output")
 VERTICES_CSV = os.path.join(INPUT_DIR, "vertices.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
 METRICS_CSV = os.path.join(OUTPUT_DIR, "vertex_metrics.csv")
@@ -80,7 +80,7 @@ def main():
     if not os.path.exists(METRICS_CSV):
         sys.exit(
             "分析結果 {0} が見つかりません。\n"
-            "先に  spark-submit --packages graphframes:... 02_graph_analysis.py  を実行してください。".format(METRICS_CSV)
+            "先に  spark-submit --packages graphframes:... 002_graph_analysis.py  を実行してください。".format(METRICS_CSV)
         )
 
     g = build_graph()

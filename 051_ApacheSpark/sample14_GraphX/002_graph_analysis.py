@@ -10,7 +10,7 @@
 #    - shortestPaths（指定ゾーンへの最短ホップ数）
 #
 #  実行にはパッケージ指定が必要（README 参照）：
-#    spark-submit --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 02_graph_analysis.py
+#    spark-submit --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 002_graph_analysis.py
 # =============================================================
 import os
 import sys
@@ -30,8 +30,8 @@ from pyspark.sql import SparkSession
 from graphframes import GraphFrame
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-INPUT_DIR = os.path.join(ROOT, "00_input")
-OUTPUT_DIR = os.path.join(ROOT, "00_output")
+INPUT_DIR = os.path.join(ROOT, "00X_input")
+OUTPUT_DIR = os.path.join(ROOT, "00X_output")
 VERTICES_CSV = os.path.join(INPUT_DIR, "vertices.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
 
@@ -71,7 +71,7 @@ def main():
     sp = g.shortestPaths(landmarks=["Z01", "Z03"])
     sp.select("id", "name", "distances").show(truncate=False)
 
-    # ---- 可視化用に 分析結果を 00_output/ へ書き出す ----
+    # ---- 可視化用に 分析結果を 00X_output/ へ書き出す ----
     metrics = (
         pr.vertices.select("id", "name", "pagerank")
         .join(cc.select("id", "component"), on="id")

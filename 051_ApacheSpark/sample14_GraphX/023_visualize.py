@@ -1,13 +1,12 @@
 # =============================================================
-#  実在の道路ネットワークを地図状に可視化する（Pattern 2 / 1番系）
+#  osmnx で取った道路ネットワークを地図状に可視化する
 #
 #  node を実際の緯度経度に配置するので、絵が本物の地図の形になる。
 #    Before : 生の道路ネットワーク（全交差点は同じ大きさ・色）
 #    After  : PageRank を交差点の「大きさ」と「色の濃さ」に反映
-#             （＝中心的な交差点ほど大きく濃く表示）
 #
 #  Spark は不要。必要ライブラリ： networkx, matplotlib（+ pandas）
-#  ※ 先に 12 を spark-submit で実行して vertex_metrics.csv を作っておくこと。
+#  ※ 先に 022_road_analysis.py を spark-submit で実行して vertex_metrics.csv を作っておくこと。
 # =============================================================
 import os
 import sys
@@ -20,8 +19,8 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import Normalize, LinearSegmentedColormap
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-INPUT_DIR = os.path.join(ROOT, "10_input")
-OUTPUT_DIR = os.path.join(ROOT, "10_output")
+INPUT_DIR = os.path.join(ROOT, "02X_input")
+OUTPUT_DIR = os.path.join(ROOT, "02X_output")
 NODES_CSV = os.path.join(INPUT_DIR, "nodes.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
 METRICS_CSV = os.path.join(OUTPUT_DIR, "vertex_metrics.csv")
@@ -67,14 +66,14 @@ def draw(ax, g, pos, node_size, node_color, title, cmap=None, norm=None, alpha=1
 
 
 def main():
-    # 12 の分析結果が無いと可視化できないので、その場で気づけるよう先に止めて実行手順を案内する
+    # １つ前の分析結果が無いと可視化できないので、その場で気づけるよう先に止めて実行手順を案内する
     if not os.path.exists(METRICS_CSV):
         sys.exit(
             "分析結果 {0} が見つかりません。\n"
-            "先に  spark-submit --packages graphframes:... 12_road_analysis.py  を実行してください。".format(METRICS_CSV)
+            "先に  spark-submit --packages graphframes:... 022_road_analysis.py  を実行してください。".format(METRICS_CSV)
         )
 
-    # 地図の骨格（座標・つながり）は 10_input から、色や大きさに使う指標は 12 の出力から取る
+    # 地図の骨格（座標・つながり）は 02X_input から、色や大きさに使う指標は 022 の出力から取る
     nodes = pd.read_csv(NODES_CSV)
     edges = pd.read_csv(EDGES_CSV)
     metrics = pd.read_csv(METRICS_CSV).set_index("id")   # id で引けるようにして後で pagerank を紐付けやすくする
@@ -93,7 +92,7 @@ def main():
     # After 用：PageRank を「点の大きさ」と「青の濃さ」に写像し、重要な交差点を一目で分かるようにする
     # metrics に無い node は最小値で補い、色スケールが破綻しないようにする
     pr = metrics.reindex(nodelist)["pagerank"].astype(float).fillna(metrics["pagerank"].min())
-    norm = Normalize(vmin=pr.min(), vmax=pr.max())   # PageRank を 0〜1 に正規化し、色と大きさの基準をそろえる
+    norm = Normalize(vmin=pr.min(), vmax=pr.max())          # PageRank を 0〜1 に正規化し、色と大きさの基準をそろえる
     base = max(3.0, 400.0 / max(1, len(nodelist)) ** 0.5)   # node が多いほど点を小さくし、地図が黒く潰れないようにする
     after_sizes = [base + 12 * base * norm(v) for v in pr]  # 重要な交差点ほど大きく描くためのサイズ配列
     after_colors = list(pr)                                 # 同じく色付け用に PageRank をそのまま渡す
@@ -103,21 +102,16 @@ def main():
     fig.patch.set_facecolor(SURFACE)
 
     # 左（Before）：全交差点を同じ大きさ・無彩色で描き、「ただの道路網」の状態を見せる
-    draw(ax1, g, pos, node_size=base, node_color=NODE_FLAT,
-         title="Before — road network")
+    draw(ax1, g, pos, node_size=base, node_color=NODE_FLAT, title="Before — road network")
     # 右（After）：PageRank を大きさ・色に反映し、要衝が浮かび上がった状態を見せる
-    nodes_pc = draw(ax2, g, pos, node_size=after_sizes, node_color=after_colors,
-                    title="After — central intersections (PageRank)", cmap=BLUES, norm=norm, alpha=0.7)
+    nodes_pc = draw(ax2, g, pos, node_size=after_sizes, node_color=after_colors, title="After — central intersections (PageRank)", cmap=BLUES, norm=norm, alpha=0.7)
     # 色の濃さが何を表すかを読み手に示すため、PageRank のカラーバーを添える
     cbar = fig.colorbar(nodes_pc, ax=ax2, fraction=0.046, pad=0.04)
     cbar.set_label("PageRank", color=INK_SUB)
     cbar.ax.tick_params(labelsize=8, colors=INK_SUB)
 
-    fig.suptitle("Real road network (Shiga Prefecture) — before / after analysis",
-                 fontsize=15, color=INK)
-    fig.text(0.5, 0.02,
-             "Nodes = intersections, edges = road segments.  "
-             "Positions are real lat/lon, so the shape is the actual street map.",
+    fig.suptitle("Real road network (Shiga Prefecture, via osmnx) — before / after analysis", fontsize=15, color=INK)
+    fig.text(0.5, 0.02, "Nodes = intersections, edges = road segments.  Positions are real lat/lon, so the shape is the actual street map.",
              ha="center", fontsize=9, color=INK_SUB)
 
     # 画面表示ではなくファイルとして残し、あとから見返したり資料に使えるよう PNG に保存する

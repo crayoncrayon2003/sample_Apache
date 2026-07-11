@@ -6,15 +6,23 @@ __pycache__/
 out.txt
 spark.log
 
-# --- Pattern 1 (01/02) ---
-00_input/
-00_output/
+# --- Pattern 1 (001/002/003) ---
+00X_input/
+00X_output/
 
-# --- Pattern 2 (11/12/13) ---
-10_input/
-10_output/
+# --- Pattern 2 (011/012/013) ---
+01X_input/
+01X_output/
 
-# --- Pattern 3 (21/22/23) ---
-20_input/
-20_output/
+# --- Pattern 3 (021/022/023) ---
+02X_input/
+02X_output/
 cache/
+
+# --- Pattern 4 (031/032/033) ---
+03X_input/
+03X_output/
+
+# --- Pattern 5 (111/112/113) ---
+11X_input/
+11X_output/

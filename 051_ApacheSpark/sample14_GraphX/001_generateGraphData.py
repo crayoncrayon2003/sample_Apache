@@ -5,7 +5,7 @@
 #  辺(edges)      = あるゾーンから別ゾーンへの移動（trips 件数付き）
 #
 #  GraphFrames は "id" 列を持つ node の DataFrameと、"src"/"dst" 列を持つ
-#  辺DataFrame から構築する。ここではそれぞれ 00_input/ 配下の CSV に書き出す。
+#  辺DataFrame から構築する。ここではそれぞれ 00X_input/ 配下の CSV に書き出す。
 # =============================================================
 import pandas as pd
 import random
@@ -14,7 +14,7 @@ import os
 random.seed(42)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-INPUT_DIR = os.path.join(ROOT, "00_input")
+INPUT_DIR = os.path.join(ROOT, "00X_input")
 VERTICES_CSV = os.path.join(INPUT_DIR, "vertices.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
 

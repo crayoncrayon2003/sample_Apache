@@ -1,22 +1,21 @@
 # =============================================================
-#  実在の道路ネットワークをグラフ解析する（Pattern 2 / 1番系）
+#  osmnx で取った道路ネットワークをグラフ解析する
 #
-#  11_generateRoadNetwork.py が作った「交差点=node / 道路区間=辺」のグラフを
-#  GraphFrames で解析する。0番系(02)と同じ API を、実データに対して使う。
-#    - 次数 (inDegrees / outDegrees) … 何本の道が集まる交差点か
-#    - PageRank                       … ネットワーク上で中心的な交差点
-#    - connectedComponents            … 連結した道路のかたまり
-#    - 総延長(km)                     … 道路網ならではの集計
-#  （shortestPaths は大規模道路網では Pregel が OOM を起こすため 02 で扱う。理由は下記）
+#  021_generateRoadNetwork_osmnx.py が作った 02X_input/ のグラフを GraphFrames で解析する。
+#    - 次数 (inDegrees / outDegrees)
+#    - PageRank
+#    - connectedComponents
+#    - 総延長(km)
+#  （shortestPaths は大規模道路網では Pregel が OOM を起こすため、ここでは扱わない）
 #
 #  実行にはパッケージ指定とドライバメモリ指定が必要：
 #    spark-submit --driver-memory 2g \
-#      --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 12_road_analysis.py
+#      --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 022_road_analysis.py
 # =============================================================
 import os
 import sys
 
-# --- 実行する Python インタプリタを固定する（02 と同じ。詳細は 02_graph_analysis.py 参照） ---
+# --- 実行する Python インタプリタを固定する（PySparkが別のPythonを掴んでバージョン不一致になるのを防ぐため） ---
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PYTHON_BIN = os.path.join(REPO_ROOT, "env", "bin", "python")
 if os.path.exists(PYTHON_BIN) and os.path.abspath(sys.executable) != PYTHON_BIN:
@@ -30,13 +29,15 @@ from pyspark.sql.functions import desc
 from graphframes import GraphFrame
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-INPUT_DIR = os.path.join(ROOT, "10_input")
-OUTPUT_DIR = os.path.join(ROOT, "10_output")
+INPUT_DIR = os.path.join(ROOT, "02X_input")
+OUTPUT_DIR = os.path.join(ROOT, "02X_output")
 NODES_CSV = os.path.join(INPUT_DIR, "nodes.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
 
-spark = SparkSession.builder.master("local[*]").appName("RoadGraphAnalysis").getOrCreate()
+# ローカル全コアで Spark を起動する
+spark = SparkSession.builder.master("local[*]").appName("RoadGraphAnalysisOsmnx").getOrCreate()
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+# connectedComponents 等が中間結果を保存するチェックポイント先を指定
 spark.sparkContext.setCheckpointDir(os.path.join(OUTPUT_DIR, "checkpoint"))
 
 
@@ -81,7 +82,7 @@ def main():
     out_degrees_sorted = out_degrees.orderBy(desc("outDegree")) # outDegree の大きい順に並べ替え
     out_degrees_sorted.show(5, truncate=False)                  # 上位5件を表示
 
-    # ---- スコアを用いて交差点をランク付けし、重要な交差点を抽出する ----
+    # ---- スコアを持ちて交差点をランク付けして、重要な交差点を抽出する ----
     print("====  PageRank (中心的な交差点)  ====")
     pr = g.pageRank(resetProbability=0.15, maxIter=10)   # 交差点ごとの重要度スコアを計算
     pr_vertices = pr.vertices                            # 地図表示のために、node の結果を取る
@@ -95,11 +96,6 @@ def main():
     cc.show(5, truncate=False)                  # id, lat, lon, component の列ができる。component は同じ道路網の node は同じ値になる
     cc_sizes = cc.groupBy("component").count()  # 各かたまりの規模（node の数）を比べるため
     cc_sizes.orderBy(desc("count")).show(5, truncate=False)   # 本体の大きな道路網と孤立塊を見分けたい
-
-    # 注) shortestPaths はここでは実行しない。
-    #   GraphX の shortestPaths(Pregel) はチェックポイントせず反復するため、
-    #   道路網のように直径が大きいグラフでは反復回数が数百に達し、系統(lineage)が肥大して
-    #   ドライバが OutOfMemory になる。最短ホップ数のデモは小規模な Pattern 1 (02) で行う。
 
     # ---- 「対象エリアの道路が全体でどれくらいの長さか」を把握したい ----
     total_km = edges.groupBy().sum("length_m").collect()[0][0] / 1000.0 / 2.0   # 双方向2本ぶんを打ち消し、実延長のkmにするため
