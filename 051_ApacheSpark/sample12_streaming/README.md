@@ -3,8 +3,16 @@
 mkdir -p ./data/master ./data/worker1 ./data/worker2
 ```
 # build
+
+## Spark 3系 (3.5.8)
 ```bash
 docker compose up -d
+```
+
+## Spark 4系 (4.1.2)
+
+```bash
+docker compose -f docker-compose.4.1.2.yml up -d
 ```
 
 Access the following URL using the Web browser.

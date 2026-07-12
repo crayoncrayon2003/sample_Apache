@@ -7,7 +7,7 @@
 #             （＝中心的な交差点ほど大きく濃く表示）
 #
 #  Spark は不要。必要ライブラリ： networkx, matplotlib（+ pandas）
-#  ※ 先に 012_road_analysis.py を spark-submit で実行して vertex_metrics.csv を作っておくこと。
+#  ※ 先に 012_road_analysis.py を実行して vertex_metrics.csv を作っておくこと。
 # =============================================================
 import os
 import sys
@@ -71,7 +71,7 @@ def main():
     if not os.path.exists(METRICS_CSV):
         sys.exit(
             "分析結果 {0} が見つかりません。\n"
-            "先に  spark-submit --packages graphframes:... 012_road_analysis.py  を実行してください。".format(METRICS_CSV)
+            "先に  python3.12 012_road_analysis.py  を実行してください。".format(METRICS_CSV)
         )
 
     # 地図の骨格（座標・つながり）は 01X_input から、色や大きさに使う指標は 012 の出力から取る

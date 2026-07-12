@@ -9,24 +9,28 @@
 #    - モチーフ探索（A->B->C の経路パターン抽出）
 #    - shortestPaths（指定ゾーンへの最短ホップ数）
 #
-#  実行にはパッケージ指定が必要（README 参照）：
-#    spark-submit --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 002_graph_analysis.py
+#  Just run it with the venv's python (no spark-submit needed):
+#    python 002_graph_analysis.py
+#  Works on both the 3系 (env358) and 4系 (env412) lines — the GraphFrames
+#  package and jars are selected automatically from the running Spark version.
 # =============================================================
 import os
-import sys
-
-# --- 実行する Python インタプリタを固定する ---
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PYTHON_BIN = os.path.join(REPO_ROOT, "env", "bin", "python")
-
-if os.path.exists(PYTHON_BIN) and os.path.abspath(sys.executable) != PYTHON_BIN:
-    os.execv(PYTHON_BIN, [PYTHON_BIN] + sys.argv)
-
-PIN_PY = PYTHON_BIN if os.path.exists(PYTHON_BIN) else sys.executable
-os.environ["PYSPARK_PYTHON"] = PIN_PY
-os.environ["PYSPARK_DRIVER_PYTHON"] = PIN_PY
-
+import pyspark
 from pyspark.sql import SparkSession
+
+# Use the Spark jars bundled with the active pyspark (ignore any stale shell
+# SPARK_HOME), so this runs under whichever venv is active — 3系 or 4系.
+os.environ["SPARK_HOME"] = os.path.dirname(pyspark.__file__)
+
+# The GraphFrames JVM package must match Spark: Spark 4.x is Scala 2.13, Spark
+# 3.x is Scala 2.12. Derive it from pyspark.__version__ so no manual --packages
+# is needed. Pulled from Maven Central via spark.jars.packages below.
+SPARK_VERSION = pyspark.__version__
+if SPARK_VERSION.startswith("4"):
+    GRAPHFRAMES_PACKAGE = "io.graphframes:graphframes-spark4_2.13:0.12.1"
+else:
+    GRAPHFRAMES_PACKAGE = "io.graphframes:graphframes-spark3_2.12:0.12.1"
+
 from graphframes import GraphFrame
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -35,7 +39,13 @@ OUTPUT_DIR = os.path.join(ROOT, "00X_output")
 VERTICES_CSV = os.path.join(INPUT_DIR, "vertices.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
 
-spark = SparkSession.builder.master("local[*]").appName("GraphFramesDemo").getOrCreate()
+spark = (
+    SparkSession.builder
+    .master("local[*]")
+    .appName("GraphFramesDemo")
+    .config("spark.jars.packages", GRAPHFRAMES_PACKAGE)
+    .getOrCreate()
+)
 # connectedComponents はチェックポイントを必要とするため出力先を設定する
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 spark.sparkContext.setCheckpointDir(os.path.join(OUTPUT_DIR, "checkpoint"))

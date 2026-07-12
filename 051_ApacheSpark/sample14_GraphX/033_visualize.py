@@ -6,7 +6,7 @@
 #    After  : PageRank をノードの「大きさ」と「色の濃さ」に反映
 #
 #  Spark は不要。必要ライブラリ： networkx, matplotlib（+ pandas）
-#  ※ 先に 032 を spark-submit で実行して vertex_metrics.csv を作っておくこと。
+#  ※ 先に 032 を実行して vertex_metrics.csv を作っておくこと。
 # =============================================================
 import os
 import sys
@@ -122,7 +122,7 @@ def main():
     if not os.path.exists(METRICS_CSV):
         sys.exit(
             "分析結果 {0} が見つかりません。\n"
-            "先に  spark-submit --packages graphframes:... 032_highway_analysis.py  を実行してください。".format(METRICS_CSV)
+            "先に  python3.12 032_highway_analysis.py  を実行してください。".format(METRICS_CSV)
         )
 
     # 地図の骨格（座標・つながり）は 03X_input から、色や大きさに使う指標は 032 の出力から取る

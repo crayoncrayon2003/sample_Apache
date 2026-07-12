@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# generated data
+00_input/
+00_output/
+
+# SDP local run artifacts
+spark-warehouse/
+metastore_db/
+derby.log
+*.log

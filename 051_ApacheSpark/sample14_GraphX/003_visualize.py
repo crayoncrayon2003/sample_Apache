@@ -80,7 +80,7 @@ def main():
     if not os.path.exists(METRICS_CSV):
         sys.exit(
             "分析結果 {0} が見つかりません。\n"
-            "先に  spark-submit --packages graphframes:... 002_graph_analysis.py  を実行してください。".format(METRICS_CSV)
+            "先に  python3.12 002_graph_analysis.py  を実行してください。".format(METRICS_CSV)
         )
 
     g = build_graph()

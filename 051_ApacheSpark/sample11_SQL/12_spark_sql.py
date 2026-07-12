@@ -114,7 +114,10 @@ if __name__ == "__main__":
     # setting spark
     os.environ["PYSPARK_PYTHON"] = "python3"
     os.environ["PYSPARK_DRIVER_PYTHON"] = "python3"
-    os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-11-openjdk-amd64"
+    # Spark 4.x jars are compiled for Java 17 (class file 61.0); Java 11 fails with
+    # UnsupportedClassVersionError. Both the 3系 (3.5.8) and 4系 (4.1.2) lines run
+    # on Java 17 in this repo, so pin 17 here.
+    os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-17-openjdk-amd64"
 
     conf = SparkConf() \
             .setAppName("SchemaTransformationExample") \

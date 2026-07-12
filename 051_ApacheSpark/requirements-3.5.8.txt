@@ -1,0 +1,13 @@
+# Spark 3系 (3.5.8) -- for the four core samples. venv: env358
+pyspark==3.5.8
+py4j==0.10.9.9
+pandas==3.0.3
+pyarrow==24.0.0
+kafka-python==3.0.7
+kafka-python-ng==2.2.3
+# GraphFrames python side (sample14); JVM package (spark3_2.12) is pulled by the scripts.
+graphframes-py==0.12.1
+scikit-learn==1.9.0
+torch==2.12.1
+matplotlib==3.11.0
+osmnx==2.1.0

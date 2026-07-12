@@ -1,0 +1,24 @@
+# =============================================================
+#  Spark Declarative Pipelines : pipeline spec
+#
+#  `spark-pipelines run` reads this file (default name: spark-pipeline.yml).
+#  It collects the Python transform files under `libraries` and builds the DAG;
+#  each @sdp.table / @sdp.materialized_view becomes a dataset and dependencies
+#  (spark.read.table(...)) are resolved automatically.
+#
+#  Requires Spark 4.x (pyspark.pipelines / spark-pipelines CLI). Run on env412.
+# =============================================================
+name: taxi_declarative_pipeline
+
+# Root directory for pipeline metadata (streaming checkpoints etc.). Required,
+# and must be an ABSOLUTE path with a URI scheme (file:// / s3a:// / hdfs://).
+storage: file:///tmp/sdp_taxi_storage
+
+# Datasets are created in the default catalog/database. To use a dedicated
+# schema, create it first (e.g. spark.sql("CREATE SCHEMA taxi")) and set:
+#   catalog: spark_catalog
+#   database: taxi
+
+libraries:
+  - glob:
+      include: transformations/**

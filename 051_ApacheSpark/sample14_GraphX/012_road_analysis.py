@@ -9,21 +9,24 @@
 #    - 総延長(km)                     … 道路網ならではの集計
 #  （shortestPaths はここでは扱わない。理由は下記）
 #
-#  実行にはパッケージ指定とドライバメモリ指定が必要：
-#    spark-submit --driver-memory 2g \
-#      --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 012_road_analysis.py
+#  実行は venv の python でそのまま（3系/4系どちらでも動く。GraphFrames の jar と
+#  ドライバメモリはスクリプト内で設定する）：
+#    python3.12 012_road_analysis.py
 # =============================================================
 import os
-import sys
+import pyspark
 
-# --- 実行する Python インタプリタを固定する（PySparkが別のPythonを掴んでバージョン不一致になるのを防ぐため） ---
-REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PYTHON_BIN = os.path.join(REPO_ROOT, "env", "bin", "python")
-if os.path.exists(PYTHON_BIN) and os.path.abspath(sys.executable) != PYTHON_BIN:
-    os.execv(PYTHON_BIN, [PYTHON_BIN] + sys.argv)
-PIN_PY = PYTHON_BIN if os.path.exists(PYTHON_BIN) else sys.executable
-os.environ["PYSPARK_PYTHON"] = PIN_PY
-os.environ["PYSPARK_DRIVER_PYTHON"] = PIN_PY
+# Use the Spark jars bundled with the active pyspark (ignore any stale shell
+# SPARK_HOME), so this runs under whichever venv is active — 3系 or 4系.
+os.environ["SPARK_HOME"] = os.path.dirname(pyspark.__file__)
+
+# The GraphFrames JVM package must match Spark (4.x = Scala 2.13, 3.x = Scala
+# 2.12). Derive it from pyspark.__version__; pulled via spark.jars.packages.
+SPARK_VERSION = pyspark.__version__
+if SPARK_VERSION.startswith("4"):
+    GRAPHFRAMES_PACKAGE = "io.graphframes:graphframes-spark4_2.13:0.12.1"
+else:
+    GRAPHFRAMES_PACKAGE = "io.graphframes:graphframes-spark3_2.12:0.12.1"
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import desc
@@ -35,7 +38,14 @@ OUTPUT_DIR = os.path.join(ROOT, "01X_output")
 NODES_CSV = os.path.join(INPUT_DIR, "nodes.csv")
 EDGES_CSV = os.path.join(INPUT_DIR, "edges.csv")
 
-spark = SparkSession.builder.master("local[*]").appName("RoadGraphAnalysis").getOrCreate()
+spark = (
+    SparkSession.builder
+    .master("local[*]")
+    .appName("RoadGraphAnalysis")
+    .config("spark.jars.packages", GRAPHFRAMES_PACKAGE)
+    .config("spark.driver.memory", "2g")
+    .getOrCreate()
+)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 spark.sparkContext.setCheckpointDir(os.path.join(OUTPUT_DIR, "checkpoint"))
 

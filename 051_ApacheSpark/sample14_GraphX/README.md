@@ -48,11 +48,12 @@ Then draw a before/after picture so the analysis is easy to read.
 # 1) Generate the graph data (written to 00X_input/)
 python3.12 001_generateGraphData.py
 
-# 2) Analyze — always run with spark-submit and --packages
-spark-submit --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 002_graph_analysis.py
+# 2) Analyze — just run with the venv's python (works on 3系 / 4系).
+#    The GraphFrames jar is auto-selected from the running Spark version.
+python3.12 002_graph_analysis.py
 
 # 2b) Same as above, but split the output: print/show -> out.txt, Spark logs -> spark.log
-spark-submit --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 002_graph_analysis.py > out.txt 2> spark.log
+python3.12 002_graph_analysis.py > out.txt 2> spark.log
 
 
 # 3) Visualize before/after into 00X_output/graph_before_after.png
@@ -76,10 +77,10 @@ Because the whole prefecture is used, the picture shows the road network wrappin
 python3.12 011_generateRoadNetwork.py
 
 # 2) Analyze — writes the results to 01X_output/vertex_metrics.csv
-spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 012_road_analysis.py
+python3.12 012_road_analysis.py
 
 # 2b) Same as above, but split the output: print/show -> out.txt, Spark logs -> spark.log
-spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 012_road_analysis.py > out.txt 2> spark.log
+python3.12 012_road_analysis.py > out.txt 2> spark.log
 
 # 3) Visualize before/after into 01X_output/road_before_after.png
 python3.12 013_visualize.py
@@ -102,10 +103,10 @@ The GraphFrames analysis and the visualization are the same as Pattern 2.
 python3.12 021_generateRoadNetwork_osmnx.py
 
 # 2) Analyze — writes 02X_output/vertex_metrics.csv
-spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 022_road_analysis.py
+python3.12 022_road_analysis.py
 
 # 2b) Same as above, but split the output: print/show -> out.txt, Spark logs -> spark.log
-spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 022_road_analysis.py > out.txt 2> spark.log
+python3.12 022_road_analysis.py > out.txt 2> spark.log
 
 # 3) Visualize before/after into 02X_output/road_before_after.png
 python3.12 023_visualize.py
@@ -127,10 +128,10 @@ along that line, and cutting the line into segments between consecutive ones (a 
 python3.12 031_generateHighwayNetwork.py
 
 # 2) Analyze — writes 03X_output/vertex_metrics.csv
-spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 032_highway_analysis.py
+python3.12 032_highway_analysis.py
 
 # 2b) Same as above, but split the output: print/show -> out.txt, Spark logs -> spark.log
-spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 032_highway_analysis.py > out.txt 2> spark.log
+python3.12 032_highway_analysis.py > out.txt 2> spark.log
 
 # 3) Visualize before/after into 03X_output/highway_before_after.png
 python3.12 033_visualize.py
@@ -164,10 +165,10 @@ border (up/down/left/right) become edges — a grid graph covering Shiga Prefect
 python3.12 111_generateRoadMeshNetwork.py
 
 # 2) Analyze — writes 11X_output/vertex_metrics.csv
-spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 112_road_analysis.py
+python3.12 112_road_analysis.py
 
 # 2b) Same as above, but split the output: print/show -> out.txt, Spark logs -> spark.log
-spark-submit --driver-memory 2g --packages graphframes:graphframes:0.8.4-spark3.5-s_2.12 112_road_analysis.py > out.txt 2> spark.log
+python3.12 112_road_analysis.py > out.txt 2> spark.log
 
 # 3) Visualize before/after into 11X_output/road_mesh_before_after.png
 python3.12 113_visualize.py

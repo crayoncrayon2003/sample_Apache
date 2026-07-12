@@ -1,0 +1,18 @@
+# Spark 4系 (4.1.2) -- venv: env412
+# pyspark[connect] pulls the Spark Connect deps needed by Spark Declarative
+# Pipelines / spark-pipelines CLI (sample15). classic local mode still works too.
+pyspark[connect]==4.1.2
+py4j==0.10.9.9
+# spark-pipelines reads the YAML pipeline spec (sample15)
+pyyaml==6.0.3
+pandas==3.0.3
+pyarrow==24.0.0
+kafka-python==3.0.7
+kafka-python-ng==2.2.3
+scikit-learn==1.9.0
+torch==2.12.1
+matplotlib==3.11.0
+osmnx==2.1.0
+# GraphFrames python side (sample14). The matching JVM package (spark4_2.13 /
+# spark3_2.12) is pulled automatically from Maven Central by the analysis scripts.
+graphframes-py==0.12.1
