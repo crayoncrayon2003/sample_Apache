@@ -122,6 +122,21 @@ spark-submit --version
 > version 3.5.8
 ```
 
+
+If you are using a virtual environment, enter the following command within the virtual environment.
+```bash
+$ (env) unset SPARK_HOME
+$ (env) export PYSPARK_PYTHON="$VIRTUAL_ENV/bin/python"
+$ (env) export PYSPARK_DRIVER_PYTHON="$VIRTUAL_ENV/bin/python"
+$ (env) hash -r
+$ (env) echo "$PYSPARK_PYTHON"
+$ (env) echo "$PYSPARK_DRIVER_PYTHON"
+$ (env) spark-submit --version
+$ (env) > version 3.5.8
+$ (env) spark-shell --version
+$ (env) > version 3.5.8
+```
+
 ## python
 
 ### create venv & activate venv
