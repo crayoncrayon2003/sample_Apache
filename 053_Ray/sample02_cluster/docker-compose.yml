@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ray-head:
     image: rayproject/ray:2.40.0-py312
