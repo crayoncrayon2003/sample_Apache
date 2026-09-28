@@ -1,5 +1,3 @@
-version: '3.8'
-
 x-hadoop-variables: &hadoop_environment
   HADOOP_HOME: /opt/hadoop
   CLUSTER_NAME: cluster-sample

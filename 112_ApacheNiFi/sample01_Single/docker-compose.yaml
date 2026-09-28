@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   nifi:
     image: apache/nifi:1.14.0

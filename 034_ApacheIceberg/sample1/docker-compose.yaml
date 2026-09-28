@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   spark-iceberg:
     # Pinned to match the REST catalog Iceberg version (1.8.1); :latest drifted
